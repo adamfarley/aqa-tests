@@ -266,7 +266,7 @@ getBinaryOpenjdk()
 				esac
 
 				echo "_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} ${curl_options} $file"
-				curl_output=$(_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} -i --stderr - ${curl_options} $file)
+				curl_output=$(_ENCODE_FILE_NEW=UNTAGGED curl -IOLJSk${curl_verbosity} ${curl_options} $file)
 				echo \"$curl_output\" | grep '^HTTP*'
 				download_exit_code=$?
 				count=$(( $count + 1 ))
