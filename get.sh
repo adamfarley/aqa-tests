@@ -266,7 +266,7 @@ getBinaryOpenjdk()
 				esac
 
 				echo "_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} ${curl_options} $file"
-				_ENCODE_FILE_NEW=UNTAGGED curl -IOLSk${curl_verbosity} -stderr - ${curl_options} $file
+				_ENCODE_FILE_NEW=UNTAGGED curl -IOLSk${curl_verbosity} ${curl_options} $file
 				grep -q '^HTTP*' "adoptopenjdk"
 
 				download_exit_code=$?
