@@ -251,6 +251,7 @@ getBinaryOpenjdk()
 						echo "remove $download_filename before retry..."
 						rm $download_filename
 					fi
+					rm *.tar.gz
 				fi
 
 				case "$VERBOSE_CURL" in
