@@ -238,10 +238,10 @@ getBinaryOpenjdk()
 			set +e
 			count=0
 			download_exit_code=-1
-			while [ $download_exit_code != 0 ] && [ $count -le 5  ]
+			while [ $download_exit_code != 9999 ] && [ $count -le 500  ]
 			do
 				if [ $count -gt 0 ]; then
-					sleep_time=300
+					sleep_time=2
 					echo "curl error code: $download_exit_code. Sleep $sleep_time secs, then retry $count..."
 					sleep $sleep_time
 
@@ -266,12 +266,14 @@ getBinaryOpenjdk()
 				esac
 
 				echo "_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} ${curl_options} $file"
-				_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} ${curl_options} $file
+				curl_output=$(_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} -i --stderr - ${curl_options} $file)
+				echo \"$curl_output\" | grep '^HTTP*'
 				download_exit_code=$?
 				count=$(( $count + 1 ))
 				
 				# Checking for error messages returned from the API.
 				if [ -f "adoptopenjdk" ] && [ $uses_api_to_get_binary == "true" ]; then
+				    cat "adoptopenjdk"
 				    download_exit_code=-99
 				fi
 			done
