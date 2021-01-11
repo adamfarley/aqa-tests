@@ -274,11 +274,12 @@ getBinaryOpenjdk()
 				
 				# Checking for error messages returned from the API.
 				if [ -f "adoptopenjdk" ] && [ $uses_api_to_get_binary == "true" ]; then
-				
-				    if grep -q "HTTP/1.1 200 OK" "adoptopenjdk"; then
-                        echo "Download successful"
-                    else
+				    file_size=$(stat --printf="%s" "adoptopenjdk")
+				    echo "File size is $file_size"
+				    if [ $file_size -lt "5000000" ]; then
                         cat "adoptopenjdk"
+                    else
+                        echo "Download successful"
                     fi
 				
 				    download_exit_code=-99
