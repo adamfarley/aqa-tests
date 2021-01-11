@@ -266,7 +266,7 @@ getBinaryOpenjdk()
 						;;
 				esac
 
-				echo "_ENCODE_FILE_NEW=UNTAGGED curl -OLJSk${curl_verbosity} ${curl_options} $file"
+				echo "_ENCODE_FILE_NEW=UNTAGGED curl -iOLSk${curl_verbosity} ${curl_options} $file"
 				_ENCODE_FILE_NEW=UNTAGGED curl -iOLSk${curl_verbosity} ${curl_options} $file
 
 				download_exit_code=$?
@@ -274,7 +274,7 @@ getBinaryOpenjdk()
 				
 				# Checking for error messages returned from the API.
 				if [ -f "adoptopenjdk" ] && [ $uses_api_to_get_binary == "true" ]; then
-				    cat "adoptopenjdk"
+				    cat "adoptopenjdk" | grep "^HTTP*"
 				    download_exit_code=-99
 				fi
 			done
