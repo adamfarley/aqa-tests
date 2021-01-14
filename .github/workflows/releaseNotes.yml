@@ -1,0 +1,9 @@
+name: "Generate Release Notes PR For A Specific JDK Version"
+on:
+  issue_comment:
+    types: [created, edited]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Whelp, this worked.
