@@ -3,7 +3,41 @@ on:
   issue_comment:
     types: [created, edited]
 jobs:
-  build:
+  createReleaseNotesPR:
+    if: ${{ !github.event.issue.pull_request }} && startsWith(github.event.comment.body, 'create release notes for ')
     runs-on: ubuntu-latest
     steps:
-    - run: echo Whelp, this worked.
+    - run: echo "Release Notes PR Creation github action has begun.".
+    - run: echo "Started creating release notes for $(echo ${{github.event.comment.body}} | cut -d' ' -f5)"
+    - run: echo "Downloading release_notes_creation_script.sh"
+    - run: wget "https://raw.githubusercontent.com/adamfarley/openjdk-tests/github_actions_sandbox/release_notes_creation_script.sh"
+    - run: echo "Downloading website repo."
+    - uses: actions/checkout@v2
+      with:
+        repository: 'adamfarley/openjdk-website'
+        ref: 'release_notes_sandbox'
+        path: 'website'
+    - run: cd website
+    - run: git checkout -b "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)"
+    - run: cd ..
+    - run: echo "Running release_notes_creation_script.sh to update the release notes in the website repo."
+    - run: bash release_notes_creation_script.sh "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)" "${pwd}/website"
+    - run: echo "release_notes_creation_script.sh has now finished."
+    - run: echo "Creating website repo PR."
+    - run: sudo apt-get -y install hub
+    - run: cd website
+    - run: git add .
+    - run: git config user.name "$(echo ${{github.event.comment.user}}"
+    - run: git config user.email "$(echo ${{github.event.comment.actor}}"
+    - run: git commit -signoff -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5)"
+    - run: export PR_NUMBER=$(hub pull-request -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5))"
+    - uses: actions/github-script@v3
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 
+          })
