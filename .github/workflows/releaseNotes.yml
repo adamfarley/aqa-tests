@@ -17,22 +17,14 @@ jobs:
         repository: 'adamfarley/openjdk-website'
         ref: 'release_notes_sandbox'
         path: 'website'
-    - run: 
-      cd website
-      git checkout -b "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)"
-      cd ..
+    - run: cd website; git checkout -b "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)"; cd ..
     - run: echo "Running release_notes_creation_script.sh to update the release notes in the website repo."
     - run: bash release_notes_creation_script.sh "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)" "${pwd}/website"
     - run: echo "release_notes_creation_script.sh has now finished."
     - run: echo "Creating website repo PR."
     - run: sudo apt-get -y install hub
-    - run: 
-      cd website
-      git add .
-      git config user.name "$(echo ${{github.event.comment.user}}"
-      git config user.email "$(echo ${{github.event.comment.actor}}"
-      git commit -signoff -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5)"
-      export PR_NUMBER=$(hub pull-request -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5))"
+    - run: cd website; git add .; git config user.name "$(echo ${{github.event.comment.user}}"; git config user.email "$(echo ${{github.event.comment.actor}}"; git commit -signoff -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5)"; export PR_NUMBER=$(hub pull-request -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5))"
+    - run: echo $PR_NUMBER
     - uses: actions/github-script@v3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
@@ -41,5 +33,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: 
+            body: $PR_NUMBER
           })
