@@ -22,6 +22,7 @@ jobs:
     - run: bash release_notes_creation_script.sh "$(echo ${{github.event.comment.body}} | cut -d' ' -f5)" "${pwd}/website"
     - run: echo "release_notes_creation_script.sh has now finished."
     - run: echo "Creating website repo PR."
+    - run: sudo apt-get -y update
     - run: sudo apt-get -y install hub
     - run: cd website; git add .; git config user.name "$(echo ${{github.event.comment.user}}"; git config user.email "$(echo ${{github.event.comment.actor}}"; git commit -signoff -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5)"; export PR_NUMBER=$(hub pull-request -m "Release Notes commit for $(echo ${{github.event.comment.body}} | cut -d' ' -f5))"
     - run: echo $PR_NUMBER
