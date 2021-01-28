@@ -68,6 +68,10 @@ usage ()
 
 parseCommandLineArgs()
 {
+    echo "aixtools debug starting";
+    rolelist;
+    rolelist -e;
+    echo "aixtools debug starting";
 	while [[ $# -gt 0 ]] && [[ ."$1" = .-* ]] ; do
 		opt="$1";
 		shift;
