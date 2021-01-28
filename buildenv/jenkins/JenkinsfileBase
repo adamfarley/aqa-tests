@@ -43,8 +43,8 @@ def setupEnv() {
 	OPENJ9_REPO = params.OPENJ9_REPO ? params.OPENJ9_REPO : "https://github.com/eclipse/openj9.git"
 
 	String[] tkg = getGitRepoBranch(params.TKG_OWNER_BRANCH, "AdoptOpenJDK:master", "TKG")
-	TKG_REPO = tkg[0]
-	TKG_BRANCH = tkg[1]
+	TKG_REPO = "https://github.com/adamfarley/TKG.git"
+	TKG_BRANCH = "openj9_settings_debug"
 
 	//For Zos, the right repo should be something like: git@github.ibm.com:runtimes/openj9-openjdk-jdk**-zos.git and for now there is only jdk11
 	env.JDK_REPO = params.JDK_REPO ? params.JDK_REPO : ""
