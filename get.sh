@@ -72,7 +72,7 @@ parseCommandLineArgs()
     eval `rolelist`;
     eval `rolelist -e`;
     echo "aixtools debug finished";
-    exit(-1);
+    exit 1;
 	while [[ $# -gt 0 ]] && [[ ."$1" = .-* ]] ; do
 		opt="$1";
 		shift;
