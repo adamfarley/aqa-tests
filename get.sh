@@ -69,8 +69,8 @@ usage ()
 parseCommandLineArgs()
 {
     echo "aixtools debug starting";
-    eval `rolelist`;
-    eval `rolelist -e`;
+    rolelist || echo "rolelist failed\n";
+    rolelist -e || echo "rolelist -e failed\n";
     echo "aixtools debug finished";
     exit 1;
 	while [[ $# -gt 0 ]] && [[ ."$1" = .-* ]] ; do
