@@ -190,7 +190,11 @@ def setupParallelEnv() {
 							testBuild = BUILD_LIST
 						}
 						def timestamp = new Date().format("yyyy-MM-dd-HH-mm", TimeZone.getTimeZone("UTC"))
-						sh "cp parallelList.mk AQA_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_parallelList_${timestamp}.mk"
+						def tagPrefix = 'AQA'
+						if (env.BUILD_LIST.startsWith('jck')) {
+							tagPrefix = 'JCK'
+						}
+						sh "cp parallelList.mk ${tagPrefix}_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_parallelList_${timestamp}.mk"
 						archiveArtifacts artifacts: "*parallelList.mk", fingerprint: true, allowEmptyArchive: false
 					}
 				} else {
