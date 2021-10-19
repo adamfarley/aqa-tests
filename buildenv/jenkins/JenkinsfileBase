@@ -923,13 +923,13 @@ def run_parallel_tests() {
 			node {
 				def buildResult = ""
 				childJobs.each {
-					echo "[DEBUG] 3"
 					cjob ->
 					def jobInvocation = cjob.value.getRawBuild()
 					def buildId = jobInvocation.getNumber()
 					def name = cjob.value.getProjectName()
 					def childResult = cjob.value.getCurrentResult()
 					try {
+						echo "[DEBUG] 3"
 						echo " ${name} #${buildId} completed with status ${childResult}"
 						echo " copy  ${name} #${buildId} test output"
 						timeout(time: 1, unit: "HOURS") {
