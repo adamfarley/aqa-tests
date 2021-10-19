@@ -915,12 +915,15 @@ def addGrinderLink() {
 }
 
 def run_parallel_tests() {
+	echo "[DEBUG] 1"
 	if (params.PARALLEL && params.PARALLEL != "None") {
+		echo "[DEBUG] 2"
 		stage ("Parallel Tests") {
 			def childJobs = parallel parallel_tests
 			node {
 				def buildResult = ""
 				childJobs.each {
+					echo "[DEBUG] 3"
 					cjob ->
 					def jobInvocation = cjob.value.getRawBuild()
 					def buildId = jobInvocation.getNumber()
@@ -960,6 +963,7 @@ def run_parallel_tests() {
 					currentBuild.result = buildResult
 				}
 				if (ARCHIVE_TEST_RESULTS) {
+					echo "[DEBUG] 4"
 					try {
 						timeout(time: 1, unit: "HOURS") {
 							publishTestOutput()
@@ -967,6 +971,8 @@ def run_parallel_tests() {
 					} catch (Exception e) {
 						echo "[ERROR] Publish testoutput timeout"
 					}
+				} else {
+					echo "[DEBUG] 5"
 				}
 			}
 		}
