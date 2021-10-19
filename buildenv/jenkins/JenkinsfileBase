@@ -190,12 +190,8 @@ def setupParallelEnv() {
 							testBuild = BUILD_LIST
 						}
 						def timestamp = new Date().format("yyyy-MM-dd-HH-mm", TimeZone.getTimeZone("UTC"))
-						def tagPrefix = 'AQA'
-						if (env.BUILD_LIST.startsWith('jck')) {
-							tagPrefix = 'JCK'
-						}
-						sh "cp parallelList.mk ${tagPrefix}_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_parallelList_${timestamp}.mk"
-						archiveArtifacts artifacts: "*parallelList.mk", fingerprint: true, allowEmptyArchive: false
+						sh "cp parallelList.mk AQA_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_parallelList_${timestamp}.mk"
+						archiveArtifacts artifacts: "*parallelList*.mk", fingerprint: true, allowEmptyArchive: false
 					}
 				} else {
 					assert false : "Build failed because cannot find NUM_LIST in parallelList.mk file."
@@ -989,12 +985,7 @@ def publishTestOutput() {
 		testBuild = BUILD_LIST
 	}
 
-	def tagPrefix = 'AQA'
-	if (env.BUILD_LIST.startsWith('jck')) {
-		tagPrefix = 'JCK'
-	}
-
-	def tag = "${tagPrefix}_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_${timestamp}"
+	def tag = "AQA_${testBuild}_${PLATFORM}_${JDK_VERSION}_${JDK_IMPL}_${timestamp}"
 
 	stage("publish") {
 		build job: 'Archive_Test_Results',
