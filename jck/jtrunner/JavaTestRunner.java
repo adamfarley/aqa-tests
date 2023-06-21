@@ -53,6 +53,7 @@ public class JavaTestRunner {
 	private static String concurrencyString;
 	private static String jckVersion;
 	private static String config;
+	private static String superKeywords;
 	private static String configAltPath;
 	private static String jckRoot;
 
@@ -115,6 +116,7 @@ public class JavaTestRunner {
 	private static final String WITH_AGENT = "withAgent";
 	private static final String INTERACTIVE = "interactive";
 	private static final String CONFIG = "config";
+	private static final String KEYWORDS = "keywords";
 	private static final String CONCURRENCY = "concurrency"; 
 	private static final String CONFIG_ALT_PATH = "configAltPath"; 
 	private static final String TASK = "task";
@@ -133,6 +135,7 @@ public class JavaTestRunner {
 		essentialParameters.add(WITH_AGENT);
 		essentialParameters.add(INTERACTIVE);
 		essentialParameters.add(CONFIG);
+		essentialParameters.add(KEYWORDS);
 		essentialParameters.add(CONCURRENCY);
 		essentialParameters.add(CONFIG_ALT_PATH);
 		essentialParameters.add(TASK);
@@ -203,6 +206,7 @@ public class JavaTestRunner {
 		interactive = testArgs.get(INTERACTIVE) == null ? "no" : testArgs.get(INTERACTIVE); 
 		concurrencyString = testArgs.get("concurrency") == null ? "NULL" : testArgs.get("concurrency"); 
 		config = testArgs.get(CONFIG) == null ? "NULL" : testArgs.get(CONFIG);
+		superKeywords = testArgs.get(KEYWORDS) == null ? "NULL" : testArgs.get(KEYWORDS);
 		configAltPath = testArgs.get(CONFIG_ALT_PATH) == null ? "NULL" : testArgs.get(CONFIG_ALT_PATH); 
 		testRoot = new File(testArgs.get(TEST_ROOT)).getCanonicalPath();
 		resultDir = new File(testArgs.get(RESULTS_ROOT)).getCanonicalPath();	
@@ -531,7 +535,9 @@ public class JavaTestRunner {
 			if ( interactive.equals("yes")) {
 				keyword = "keywords interactive";
 			}
-			else { 
+			else if () {
+				keyword = "keywords robot";
+			} else {
 				keyword = "keywords !interactive";
 			}
 

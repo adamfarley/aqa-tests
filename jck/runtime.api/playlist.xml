@@ -489,6 +489,23 @@
 		</groups>
 	</test>
 	<test>
+		<testCaseName>jck-runtime-api-java_awt_robot</testCaseName>
+		<variations>
+			<variation>NoOptions</variation>
+		</variations>
+		<command>$(GEN_JTB_GENERIC) tests=api/java_awt testsuite=RUNTIME; \
+		$(EXEC_RUNTIME_TEST); \
+		$(TEST_STATUS); \
+		$(GEN_SUMMARY_GENERIC) tests=api/java_awt testsuite=RUNTIME
+		</command>
+		<levels>
+			<level>special</level>
+		</levels>
+		<groups>
+			<group>jck</group>
+		</groups>
+	</test>
+	<test>
 		<testCaseName>jck-runtime-api-java_beans</testCaseName>
 		<disables>
 			<disable>
