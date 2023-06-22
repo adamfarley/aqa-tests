@@ -53,9 +53,11 @@ public class JavaTestRunner {
 	private static String concurrencyString;
 	private static String jckVersion;
 	private static String config;
-	private static String superKeywords;
 	private static String configAltPath;
 	private static String jckRoot;
+
+	private static ArrayList<String> superKeywords;
+	private static ArrayList<String> allKeywords;
 
 	private static String testSuite;
 	private static String jckBase;
@@ -207,7 +209,8 @@ public class JavaTestRunner {
 		interactive = testArgs.get(INTERACTIVE) == null ? "no" : testArgs.get(INTERACTIVE); 
 		concurrencyString = testArgs.get("concurrency") == null ? "NULL" : testArgs.get("concurrency"); 
 		config = testArgs.get(CONFIG) == null ? "NULL" : testArgs.get(CONFIG);
-		superKeywords = testArgs.get(KEYWORDS) == null ? "NULL" : testArgs.get(KEYWORDS);
+		superKeywords = testArgs.get(KEYWORDS) == null ? new ArrayList<String>() : new ArrayList<String>(testArgs.get(KEYWORDS).split("&"));
+		allKeywords = testArgs.get(KEYWORDS) == null ? new ArrayList<String>() : new ArrayList<String>(testArgs.get(KEYWORDS).split("&"));
 		configAltPath = testArgs.get(CONFIG_ALT_PATH) == null ? "NULL" : testArgs.get(CONFIG_ALT_PATH); 
 		testRoot = new File(testArgs.get(TEST_ROOT)).getCanonicalPath();
 		resultDir = new File(testArgs.get(RESULTS_ROOT)).getCanonicalPath();	
@@ -490,7 +493,6 @@ public class JavaTestRunner {
 		String jckRuntimeNativeLibValue = nativesLoc;
 		String jckRuntimeJmxLibValue = nativesLoc;
 		int concurrency;
-		String keyword = "";
 		String libPath = "";
 		String robotAvailable = "";
 		String hostname = "";
@@ -536,12 +538,9 @@ public class JavaTestRunner {
 		// Runtime settings
 		if (testSuite.equals("RUNTIME")) {
 			if ( interactive.equals("yes")) {
-				keyword = "keywords interactive";
-			}
-			else if () {
-				keyword = "keywords robot";
+				addKeyword("interactive");
 			} else {
-				keyword = "keywords !interactive";
+				addKeyword("!interactive";
 			}
 
 			if (spec.contains("win")) {
@@ -573,7 +572,7 @@ public class JavaTestRunner {
 			
 			fileContent += "concurrency " + concurrencyString + ";\n";
 			fileContent += "timeoutfactor 4" + ";\n";	// 4 base time limit equal 40 minutes
-			fileContent += keyword + ";\n";
+			fileContent += "keywords " getKeywords() + ";\n";
 
 			if (spec.contains("win")) {
 				// On Windows set the testplatform.os to Windows and set systemRoot, but do not
@@ -611,7 +610,7 @@ public class JavaTestRunner {
 			}
 
 			if ( tests.contains("api/java_awt") || tests.contains("api/javax_swing") || tests.equals("api") ) {
-				keyword += "&!robot";
+				addKeyword("!robot");
 			}
 
 			if ( !spec.contains("win") && (tests.contains("api/signaturetest") || tests.contains("api/java_io")) ) {
@@ -748,7 +747,7 @@ public class JavaTestRunner {
 		// Compiler settings
 		if (testSuite.equals("COMPILER")) {
 
-			keyword = "keywords compiler";
+			addKeyword("compiler");
 
 			// Overrides only required on zOS for compiler tests
 			if (spec.contains("zos")) {
@@ -757,7 +756,7 @@ public class JavaTestRunner {
 
 			fileContent += "concurrency " + concurrencyString + ";\n";
 			fileContent += "timeoutfactor 4" + ";\n";							// lang.CLSS,CONV,STMT,INFR requires more than 1h to complete. lang.Annot,EXPR,LMBD require more than 2h to complete tests
-			fileContent += keyword + ";\n";
+			fileContent += "keywords " + getKeywords() + ";\n";
 
 			String cmdAsStringOrFile = "cmdAsString"; // Whether to reference cmd via cmdAsString or cmdAsFile
 			if (spec.contains("win")) {
@@ -1370,5 +1369,30 @@ public class JavaTestRunner {
 		}
 
 		throw new Error("Invalid JCK Version found: " + version);
+	}
+	
+	/**
+	 * Add a new keyword to the list, but only if it doesn't clash with a user-specified super-keyword.
+	 */
+	private static void addKeyword(String newKeyword) {
+		String bareKeyword = newKeyword;
+		if (newKeyword.startsWith("!")) bareKeyword = newKeyword.substring(1);
+		if(superKeywords.contains(bareKeyword) || superKeywords.contains("!" + bareKeyword)) {
+			return;
+		} else {
+			allKeywords.add();
+		}
+	}
+	
+	/**
+	 * Retrieve a properly-formatted string containing a concatenated list of keywords.
+	 */
+	private static String getKeywords() {
+		String outputString = "";
+		for(String singleKeyword : allKeywords) {
+			outputString += singleKeyword + "&";
+		}
+		if (outputString.length() > 0) outputString = outputString.substring(0, outputString.length() - 1);
+		return outputString;
 	}
 }
