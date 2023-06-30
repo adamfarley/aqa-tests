@@ -34,6 +34,8 @@ See the License for the specific language governing permissions and
 
 #### Guide to the Test Jobs at Adoptium
 
+<a href="www.google.com">html link</a>
+[markdown link](www.google.com)
 For nightly and release builds, there are test jobs running as part of the Adoptium continuous delivery pipelines.  There is a [blog post and brief presentation](https://blog.adoptopenjdk.net/2017/12/testing-java-help-count-ways) that explains what testing we run and how they fit into the overall delivery pipeline.  As the world of testing at Adoptium is evolving and improving quickly, some documentation may fall behind the march of progress.  Please let us know and help us keep it up-to-date, and ask questions at the [Adoptium testing Slack channel](https://adoptium.slack.com/archives/C5219G28G)!
 
 ![CI pipeline view](doc/diagrams/ciPipeline.jpg)
