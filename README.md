@@ -76,7 +76,7 @@ Tests from the adoptium/aqa-systemtest repo
 --- 
 
 ##### [external](https://ci.adoptium.net/view/Test_external/) tests - 3rd party application tests
-Test suites from a variety of applications, along with microprofile TCKs, run in Docker containers
+Test suites from a variety of applications, along with microprofile TCKs, run in Docker containers #Fred #build
 
 ```mermaid
 graph TD
