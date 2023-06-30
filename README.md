@@ -40,7 +40,7 @@ For nightly and release builds, there are test jobs running as part of the Adopt
 
 #### Test 'Inventory'
 
-The directory structure in this aqa-tests repository is meant to reflect the different types of test we run (and pull from lots of other locations).  The diagrams below show the test make target for each of the types, along with in-plan, upcoming additions (denoted by dotted line grey boxes). The provided links jump to test jobs in Jenkins (ci.adoptium.net). <a href="www.google.com">html link</a> [markdown link](www.google.com)
+The directory structure in this aqa-tests repository is meant to reflect the different types of test we run (and pull from lots of other locations).  The diagrams below show the test make target for each of the types, along with in-plan, upcoming additions (denoted by dotted line grey boxes). The provided links jump to test jobs in Jenkins (ci.adoptium.net). <a href="https://www.google.com">html link</a> [markdown link](https://www.google.com)
 
 ```mermaid
 graph TD
