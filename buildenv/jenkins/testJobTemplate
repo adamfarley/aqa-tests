@@ -350,7 +350,7 @@ ARCH_OS_LIST.each { ARCH_OS ->
 								When DYNAMIC_COMPILE is on: <br/>
 								- if there is no BUILD_LIST input, DYNAMIC_COMPILE will automatically figure out which test material to compile based on the test target.<br/>
 								- if there is BUILD_LIST input, the BUILD_LIST will be further refined based on the test target.''')
-							stringParam('TARGET', "${ACTUAL_TARGET}", 
+							stringParam('TARGET', "${ACTUAL_TARGET}",
 								    '''Test TARGET to execute, you can also select sub-targets such as:<br/>
                                                                        different level: sanity|extended|special<br/>
                                                                        different group: openjdk|system|jck|functional|perf|external<br/>
@@ -382,7 +382,7 @@ ARCH_OS_LIST.each { ARCH_OS ->
 							    sectionHeader('Additional test parameters if you want to append or replace options, or repeat the test for more than 1 iteration.')
 							    sectionHeaderStyle(sectionHeaderHelpTextStyleCss)
 							}
-							choiceParam('TEST_FLAG', ['', 'JITAAS', 'AOT', 'FIPS'], "Optional. Only set for feature testing. (i.e.,  JITAAS, AOT, FIPS, etc)")
+							choiceParam('TEST_FLAG', ['', 'JITAAS', 'AOT', 'FIPS', 'FIPS140_2'], "Optional. Only set for feature testing. (i.e.,  JITAAS, AOT, FIPS140_2, etc)")
 							stringParam('EXTRA_OPTIONS', "", "Use this to append options to the test command")
 							stringParam('JVM_OPTIONS', "", "Use this to replace the test original command line options")
                                                         stringParam('APPLICATION_OPTIONS', "", "Use this to append options to the test application")

@@ -526,8 +526,8 @@ public class JavaTestRunner {
 			extraJvmOptions += " -Dfile.encoding=US-ASCII";
 		}
 
-		// testExecutionType of multiJVM_group on Windows and AIX causes memory exhaustion, so limit to plain multiJVM
-		if (jckVersionInt >= 17 && (spec.contains("win") || spec.contains("aix"))) {
+		// testExecutionType of multiJVM_group on Windows causes memory exhaustion, so limit to plain multiJVM
+		if (jckVersionInt >= 17 && spec.contains("win")) {
 			fileContent += "set jck.env.testPlatform.multiJVM \"Yes\";\n";
 		}
 
@@ -570,6 +570,10 @@ public class JavaTestRunner {
 				return false; 
 			}
 			
+			if ( tests.contains("api/java_awt") || tests.contains("api/javax_swing") || tests.equals("api") ) {
+				keyword += "&!robot";
+			}
+
 			fileContent += "concurrency " + concurrencyString + ";\n";
 			fileContent += "timeoutfactor 4" + ";\n";	// 4 base time limit equal 40 minutes
 			fileContent += "keywords " getKeywords() + ";\n";
@@ -609,10 +613,13 @@ public class JavaTestRunner {
 				}
 			}
 
+<<<<<<< HEAD
 			if ( tests.contains("api/java_awt") || tests.contains("api/javax_swing") || tests.equals("api") ) {
 				addKeyword("!robot");
 			}
 
+=======
+>>>>>>> refs/remotes/upstream/master
 			if ( !spec.contains("win") && (tests.contains("api/signaturetest") || tests.contains("api/java_io")) ) {
 				fileContent += "set jck.env.testPlatform.xWindows \"No\"" + ";\n";
 			}
@@ -907,8 +914,7 @@ public class JavaTestRunner {
 
 	public static boolean execute() throws Exception {
 		if (!(testExecutionType.equals("multijvm") && withAgent.equals("off"))) {
-			//TODO: Error message sounds odd to me. Will raise an issue to address.
-			System.out.println("Only non-multijvm tests are supported with Agent turned off");
+			System.out.println("Only multijvm tests are supported with Agent turned off");
 			return false;
 		}
 

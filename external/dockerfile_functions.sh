@@ -86,7 +86,7 @@ print_image_args() {
     tag=""
     if [[ "${package}" == "jre" ]]; then
         tag="${version}-jre"
-    else 
+    else
         tag="${version}-jdk"
     fi
     if [[ "${vm}" == "openj9" ]]; then
@@ -340,7 +340,7 @@ print_python_install() {
           "\nENV PYTHON_VERSION=\$PYTHON_VERSION" \
           "\n\n# Install python" \
           "\nRUN wget --progress=dot:mega -O python.tar.xz https://www.python.org/ftp/python/\${PYTHON_VERSION}/Python-\${PYTHON_VERSION}.tar.xz \\" >> ${file}
-    
+
     echo -e "\t&& tar -xJf python.tar.xz \\" \
             "\n\t&& cd Python-\${PYTHON_VERSION}  \\" \
             "\n\t&& ./configure --prefix=/usr/local \\" \
@@ -388,7 +388,7 @@ print_criu_install() {
         # Method 2: build from source code
         echo -e "\n# Install dependent packages for criu" \
                 "\nRUN apt-get update \\" \
-                "\n\t&& apt-get install -y --no-install-recommends iptables libbsd-dev libcap-dev libdrm-dev libnet1-dev libgnutls28-dev libgnutls30 libnftables-dev libnl-3-dev libprotobuf-dev python3-distutils protobuf-c-compiler protobuf-compiler xmlto libssl-dev python3-future libxt-dev libfontconfig1-dev python3-protobuf nftables libcups2-dev libasound2-dev libxtst-dev libexpat1-dev libfontconfig libaio-dev libffi-dev libx11-dev libprotobuf-c-dev libnuma-dev libfreetype6-dev libxrandr-dev libxrender-dev libelf-dev libxext-dev libdwarf-dev" \
+                "\n\t&& apt-get install -y --no-install-recommends gcc iptables libbsd-dev libcap-dev libdrm-dev libnet1-dev libgnutls28-dev libgnutls30 libnftables-dev libnl-3-dev libprotobuf-dev python3-distutils pip protobuf-c-compiler protobuf-compiler xmlto libssl-dev python3-future libxt-dev libfontconfig1-dev python3-protobuf nftables libcups2-dev libasound2-dev libxtst-dev libexpat1-dev libfontconfig libaio-dev libffi-dev libx11-dev libprotobuf-c-dev libnuma-dev libfreetype6-dev libxrandr-dev libxrender-dev libelf-dev libxext-dev libdwarf-dev" \
                 "\n" >> ${file}
 
         echo -e "\n# Build criu and set capabilities" \
@@ -397,10 +397,25 @@ print_criu_install() {
                 "\n\t&& git clone https://github.com/ibmruntimes/criu.git \\" \
                 "\n\t&& cd criu \\" \
                 "\n\t&& git fetch origin \\" \
-                "\n\t&& git reset --hard origin/march_ea_23 \\" \
+                "\n\t&& git reset --hard origin/0.40-release \\" \
                 "\n\t&& make PREFIX=/usr install \\" \
-                "\n\t&& criu -V \\" \
-                "\n\t&& setcap cap_checkpoint_restore,cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_admin,cap_sys_chroot,cap_sys_ptrace,cap_sys_admin,cap_sys_resource,cap_sys_time,cap_audit_control=eip /usr/sbin/criu \\" \
+                "\n\t&& criu -V " \
+                "\n" >> ${file}
+
+        # zlinux temporarily requires libc package from jammy-proposed repository
+        if [[ "${platform}" == *"390"* ]]; then
+            echo -e "\nRUN echo \"deb http://ports.ubuntu.com/ubuntu-ports jammy-proposed restricted main multiverse universe\" >> /etc/apt/sources.list.d/ubuntu-jammy-proposed.list \\" \
+                    "\n\t&& echo \"# Configure apt to allow selective installs of packages from proposed\" > /etc/apt/preferences.d/proposed-updates \\" \
+                    "\n\t&& echo \"Package: libc6*\" >> /etc/apt/preferences.d/proposed-updates \\" \
+                    "\n\t&& echo \"Pin: release a=jammy-proposed\" >> /etc/apt/preferences.d/proposed-updates \\" \
+                    "\n\t&& echo \"Pin-Priority: 400\" >> /etc/apt/preferences.d/proposed-updates \\" \
+                    "\n\t&& apt-get update \\" \
+                    "\n\t&& apt-get install -y libc6=2.35-0ubuntu3.3 \\" \
+                    "\n\t&& /lib/ld64.so.1 --list-tunables " \
+                    "\n" >> ${file}
+        fi
+
+        echo -e "\nRUN setcap cap_checkpoint_restore,cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_admin,cap_sys_chroot,cap_sys_ptrace,cap_sys_admin,cap_sys_resource,cap_sys_time,cap_audit_control=eip /usr/sbin/criu \\" \
                 "\n\t&& export GLIBC_TUNABLES=glibc.pthread.rseq=0:glibc.cpu.hwcaps=-XSAVEC,-XSAVE,-AVX2,-ERMS,-AVX,-AVX_Fast_Unaligned_Load" \
                 "\n" >> ${file}
     fi
@@ -416,7 +431,7 @@ print_maven_install() {
           "\nENV MAVEN_HOME /opt/maven" \
           "\n\n# Install Maven" \
           "\nRUN  wget --no-verbose --no-check-certificate --no-cookies https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/\${MAVEN_VERSION}/apache-maven-\${MAVEN_VERSION}-bin.tar.gz \\" >> ${file}
-    
+
     echo -e "\t&& tar -zvxf apache-maven-\${MAVEN_VERSION}-bin.tar.gz -C /opt/ \\" \
             "\n\t&& ln -s /opt/apache-maven-\${MAVEN_VERSION} /opt/maven \\" \
             "\n\t&& rm -f apache-maven-\${MAVEN_VERSION}-bin.tar.gz" \
@@ -624,7 +639,7 @@ generate_dockerfile() {
     if [[ ! -z ${jdk_install} ]]; then
         print_jdk_install ${file} ${os} ${platform};
     fi
-    
+
     if [[ ! -z ${maven_version} ]]; then
         print_maven_install ${file} ${maven_version};
     fi

@@ -671,7 +671,7 @@
 		$(GEN_SUMMARY_GENERIC) tests=api/java_security testsuite=RUNTIME
 		</command>
 		<levels>
-			<level>extended</level>
+			<level>sanity</level>
 		</levels>
 		<groups>
 			<group>jck</group>
@@ -853,7 +853,7 @@
 		$(GEN_SUMMARY_GENERIC) tests=api/javax_crypto testsuite=RUNTIME
 		</command>
 		<levels>
-			<level>extended</level>
+			<level>sanity</level>
 		</levels>
 		<groups>
 			<group>jck</group>
