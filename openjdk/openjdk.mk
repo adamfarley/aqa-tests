@@ -24,14 +24,17 @@ ifeq ($(OS),Linux)
 	MEMORY_SIZE:=$(shell KMEMMB=`awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo`; if [ -r /sys/fs/cgroup/memory/memory.limit_in_bytes ]; then CGMEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes`; else CGMEM=`expr $${KMEMMB} \* 1024`; fi; CGMEMMB=`expr $${CGMEM} / 1024`; if [ "$${KMEMMB}" -lt "$${CGMEMMB}" ]; then echo "$${KMEMMB}"; else echo "$${CGMEMMB}"; fi)
 endif
 ifeq ($(OS),Darwin)
+    $(warning DEBUG1.1)
 	NPROCS:=$(shell sysctl -n hw.ncpu)
 	MEMORY_SIZE:=$(shell expr `sysctl -n hw.memsize` / 1024 / 1024)
 endif
 ifeq ($(OS),FreeBSD)
+    $(warning DEBUG1.2)
 	NPROCS:=$(shell sysctl -n hw.ncpu)
 	MEMORY_SIZE:=$(shell expr `sysctl -n hw.memsize` / 1024 / 1024)
 endif
 ifeq ($(CYGWIN),1)
+    $(warning DEBUG1.3)
  	NPROCS:=$(NUMBER_OF_PROCESSORS)
 	MEMORY_SIZE:=$(shell \
 		expr `wmic computersystem get totalphysicalmemory -value | grep = \
