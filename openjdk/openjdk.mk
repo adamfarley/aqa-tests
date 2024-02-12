@@ -19,6 +19,7 @@ OS:=$(shell uname -s)
 ARCH:=$(shell uname -m)
 
 ifeq ($(OS),Linux)
+	$(warning DEBUG1)
 	NPROCS:=$(shell nproc)
 	MEMORY_SIZE:=$(shell KMEMMB=`awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo`; if [ -r /sys/fs/cgroup/memory/memory.limit_in_bytes ]; then CGMEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes`; else CGMEM=`expr $${KMEMMB} \* 1024`; fi; CGMEMMB=`expr $${CGMEM} / 1024`; if [ "$${KMEMMB}" -lt "$${CGMEMMB}" ]; then echo "$${KMEMMB}"; else echo "$${CGMEMMB}"; fi)
 endif
@@ -49,7 +50,9 @@ endif
 MEM := $(shell expr $(MEMORY_SIZE) / 2048)
 CORE := $(shell expr $(NPROCS) / 2 + 1)
 CONC := $(CORE)
+$(warning DEBUG2)
 ifeq ($(shell expr $(CORE) \> $(MEM)), 1)
+	$(warning DEBUG2)
 	CONC := $(MEM)
 endif
 # Can't determine cores on zOS, use a reasonable default
@@ -58,9 +61,12 @@ ifeq ($(OS),OS/390)
 endif
 JTREG_CONC ?= 0
 # Allow JTREG_CONC be set via parameter
+$(warning DEBUG3)
 ifeq ($(JTREG_CONC), 0)
+	$(warning DEBUG4)
 	JTREG_CONC := $(CONC)
 	ifeq ($(JTREG_CONC), 0)
+		$(warning DEBUG5)
 		JTREG_CONC := 1
 	endif
 endif
