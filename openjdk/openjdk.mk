@@ -25,7 +25,7 @@ ifeq ($(OS),Linux)
     $(warning debug1 $(shell awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo))
     $(warning debug2 $(shell cat /sys/fs/cgroup/memory/memory.limit_in_bytes))
     $(warning debug3 MEMORY_SIZE=$(MEMORY_SIZE))
-    $(warning debug4 NPROCS=$(NPROCS)
+    $(warning debug4 NPROCS=$(NPROCS))
 endif
 ifeq ($(OS),Darwin)
     $(warning DEBUG1.1)
