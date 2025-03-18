@@ -1,7 +1,9 @@
 # Arctic Guide
 
 Foreword: This is the public guide to running the Arctic project.
+
 Please **do not** add any information specific to TCK testing.
+
 TCK-specific Arctic information is documented [here](https://github.com/temurin-compliance/temurin-compliance/blob/arctic_docs/doc/ArcticTCKGotchas.md).
 
 ## Contents
@@ -78,13 +80,13 @@ test start testclassname testcasename
 ### General Tips
 - Use JDK17 to set up and run Arctic. JDK21 does not work.
 
-### Windows
+### Windows Tips
 
 
-### Mac
+### Mac Tips
 
 
-## Public Gotchas
+## Gotchas
 
 ### Section Contents
 - [General Gotchas](#Genberal-Gotchas)
@@ -94,8 +96,8 @@ test start testclassname testcasename
 ### General Gotchas
 - Use of JDK21 results in errors. Use JDK17 instead.
 
-### Windows
+### Windows Gotchas
 
 
-### Mac
+### Mac Gotchas
 
