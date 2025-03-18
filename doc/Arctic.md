@@ -4,7 +4,7 @@ Foreword: This is the public guide to running the Arctic project.
 
 Please **do not** add any information specific to TCK testing.
 
-TCK-specific Arctic information is documented [here](https://github.com/temurin-compliance/temurin-compliance/blob/arctic_docs/doc/ArcticTCKGotchas.md).
+TCK-specific Arctic information is documented [here](https://github.com/temurin-compliance/temurin-compliance/blob/arctic_docs/doc/ArcticTCK.md).
 
 ## Contents
 
