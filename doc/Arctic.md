@@ -19,9 +19,23 @@ TCK-specific Arctic information is documented [here](https://github.com/temurin-
 - [To play](#To-Play)
 
 ### Setup:
-1. Clone https://github.com/corretto/arctic
+1. Setup working directory and clone arctic.
+```
+mkdir arctic_work_dir
+cd arctic_work_dir
+export workingdir=$(pwd)
+git clone https://github.com/corretto/arctic "${workingdir}"
+```
 
 2. Download JDK17
+```
+export jdk_tar_url="put jdk17 url here"
+mkdir jdk
+cd jdk
+export jdkdir="$(pwd)/bin"
+wget "${jdk_tar_url}"
+
+```
 
 3. Add JDK17's java bin directory to the start of your path.
 
