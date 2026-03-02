@@ -111,6 +111,7 @@ java/lang/String/EqualsIgnoreCase.java https://github.com/eclipse-openj9/openj9/
 java/lang/String/UnicodeCasingTest.java https://github.com/eclipse-openj9/openj9/issues/4597 linux-s390x
 java/lang/StringBuffer/HugeCapacity.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 java/lang/StringBuilder/HugeCapacity.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
+java/lang/StringBuilder/RacingSBThreads.java https://github.com/eclipse-openj9/openj9/issues/23353 generic-all
 java/lang/System/Logger/custom/CustomLoggerTest.java https://github.com/eclipse-openj9/openj9/issues/6674 generic-all
 java/lang/System/Logger/default/DefaultLoggerTest.java https://github.com/eclipse-openj9/openj9/issues/6674 generic-all
 java/lang/System/LoggerFinder/BaseLoggerFinderTest/BaseLoggerFinderTest.java https://github.com/eclipse-openj9/openj9/issues/6674 generic-all
@@ -474,7 +475,6 @@ java/time/test/java/time/TestClock_System.java https://github.com/eclipse-openj9
 java/util/Arrays/largeMemory/ParallelPrefix.java https://github.com/eclipse-openj9/openj9/issues/4100 linux-ppc64le
 java/util/Arrays/TimSortStackSize2.java https://github.com/eclipse-openj9/openj9/issues/7086 generic-all
 java/util/BitSet/stream/BitSetStreamTest.java https://github.com/eclipse-openj9/openj9/issues/4720 linux-all
-java/util/concurrent/Executors/UnreferencedExecutor.java https://github.com/eclipse-openj9/openj9/issues/22665 aix-all
 java/util/concurrent/forkjoin/FJExceptionTableLeak.java https://github.com/eclipse-openj9/openj9/issues/3209 generic-all
 java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/eclipse-openj9/openj9/issues/7125 macosx-all,linux-all,aix-all
 java/util/concurrent/locks/Lock/OOMEInAQS.java https://github.com/eclipse-openj9/openj9/issues/16659 generic-all
@@ -616,7 +616,3 @@ jdk/internal/platform/docker/TestDockerMemoryMetrics.java https://github.com/ecl
 jdk/internal/platform/docker/TestGetFreeSwapSpaceSize.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
 jdk/internal/platform/docker/TestLimitsUpdating.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
 jdk/internal/platform/docker/TestPidsLimit.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
-
-# jdk_vector
-jdk/incubator/vector/Double128VectorTests.java https://github.com/eclipse-openj9/openj9/issues/23000 linux-x64,macosx-x64,windows-x64
-jdk/incubator/vector/Float128VectorTests.java https://github.com/eclipse-openj9/openj9/issues/23000 linux-x64,macosx-x64,windows-x64
