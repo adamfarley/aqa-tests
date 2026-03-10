@@ -492,3 +492,65 @@ serviceability/jvmti/RedefineClasses/RedefineLeakThrowable.java#id1 https://gith
 # hotspot_vmTestbase_vm_compiler
 
 vmTestbase/jit/misctests/fpustack/GraphApplet.java https://github.com/adoptium/infrastructure/issues/211 macosx-all
+
+############################################################################
+
+# Unreliables - Tests that fail infrequently. These must not block releases.
+# Uncomment duplicates above if any of these lines are removed.
+
+com/sun/management/DiagnosticCommandMBean/DcmdMBeanDoubleInvocationTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+com/sun/management/DiagnosticCommandMBean/DcmdMBeanInvocationTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+com/sun/management/DiagnosticCommandMBean/DcmdMBeanTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/DatagramPacket/ReuseBuf.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/DatagramSocket/B6411513.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/DatagramSocket/DatagramSocketExample.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,aix-all
+java/net/DatagramSocket/DatagramSocketMulticasting.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,aix-all
+java/net/DatagramSocket/PortUnreachable.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/DatagramSocket/Send12k.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/DatagramSocket/SendReceiveMaxSize.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,aix-ppc64,linux-ppc64le
+java/net/DatagramSocket/SendSize.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/DatagramSocket/SetDatagramSocketImplFactory/ADatagramSocket.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/MulticastSocket/SetLoopbackModeIPv4.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/PlainSocketImpl/BigBacklog.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/PortUnreachableException/Concurrent.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/PortUnreachableException/OneExceptionOnly.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/Socket/B6210227.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/Socket/GetLocalAddress.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/HttpProxy.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/Socket/InheritTimeout.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/ProxyCons.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/ReadTimeout.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/SetSoLinger.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/SoTimeout.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/SocksConnectTimeout.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/net/Socket/asyncClose/BrokenPipe.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socket/setReuseAddress/Restart.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/SocketInputStream/SocketTimeout.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/Socks/BadProxySelector.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+java/net/ipv6tests/TcpTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+java/nio/channels/FileChannel/LargeGatheringWrite.java https://github.com/adoptium/infrastructure/issues/4262 linux-s390x,linux-aarch64,aix-all
+jdk/jfr/jvm/TestChunkIntegrity.java https://github.com/adoptium/aqa-tests/issues/6589 linux-s390x
+jdk/jfr/jvm/TestJFRIntrinsic.java https://github.com/adoptium/aqa-tests/issues/6589 linux-s390x
+runtime/ErrorHandling/CreateCoredumpOnCrash.java https://github.com/adoptium/aqa-tests/issues/6596 linux-s390x,linux-x64,windows-aarch64,macosx-all,linux-riscv64,linux-ppc64le
+sun/management/jdp/JdpDefaultsTest.java https://github.com/adoptium/infrastructure/issues/3189 linux-s390x,aix-all
+sun/management/jdp/JdpJmxRemoteDynamicPortTest.java https://github.com/adoptium/infrastructure/issues/3189 linux-s390x,aix-all
+sun/management/jdp/JdpSpecificAddressTest.java https://github.com/adoptium/infrastructure/issues/3189 linux-s390x,aix-all
+sun/management/jmxremote/bootstrap/CustomLauncherTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/management/jmxremote/bootstrap/JMXInterfaceBindingTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/management/jmxremote/bootstrap/JvmstatCountersTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/management/jmxremote/bootstrap/LocalManagementTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/management/jmxremote/bootstrap/RmiRegistrySslTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/management/jmxremote/startstop/JMXStartStopTest.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/net/www/http/HttpClient/B8025710.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/net/www/protocol/http/B6299712.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/net/www/protocol/http/B6369510.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/net/www/protocol/http/HttpOnly.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/net/www/protocol/http/NoCache.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/net/www/protocol/https/HttpsURLConnection/B6216082.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x
+sun/net/www/protocol/https/HttpsURLConnection/ImpactOnSNI.java https://github.com/adoptium/infrastructure/issues/2807 linux-s390x,linux-ppc64le
+sun/security/util/math/TestIntegerModuloP.java#Curve448OrderField https://github.com/adoptium/infrastructure/issues/3855 windows-x64
+sun/security/util/math/TestIntegerModuloP.java#IntegerPolynomial448 https://github.com/adoptium/infrastructure/issues/3855 windows-x64
+sun/security/util/math/TestIntegerModuloP.java#IntegerPolynomialP384 https://github.com/adoptium/infrastructure/issues/3855 windows-x64
+sun/security/util/math/TestIntegerModuloP.java#IntegerPolynomialP521 https://github.com/adoptium/infrastructure/issues/3855 windows-x64
+sun/security/util/math/TestIntegerModuloP.java#P384OrderField https://github.com/adoptium/infrastructure/issues/3855 windows-x64
+
