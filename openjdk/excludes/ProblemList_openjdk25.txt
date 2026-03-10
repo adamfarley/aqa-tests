@@ -148,7 +148,7 @@ java/net/DatagramSocket/GetLocalAddress.java https://github.com/adoptium/aqa-tes
 java/net/DatagramSocket/ReuseAddressTest.java https://github.com/adoptium/aqa-tests/issues/3088 linux-ppc64le
 # java/net/DatagramSocket/Send12k.java https://github.com/adoptium/aqa-tests/issues/3088 linux-ppc64le
 # java/net/DatagramSocket/SendReceiveMaxSize.java https://github.com/adoptium/aqa-tests/issues/3820 aix-all
-# java/net/DatagramSocket/SendReceiveMaxSize.java https://github.com/adoptium/aqa-tests/issues/3088 aix-ppc64,linux-ppc64le 
+# java/net/DatagramSocket/SendReceiveMaxSize.java https://github.com/adoptium/aqa-tests/issues/3088 aix-ppc64,linux-ppc64le
 # java/net/DatagramSocket/SendSize.java.SendSize https://github.com/adoptium/aqa-tests/issues/3088 linux-ppc64le
 # java/net/DatagramSocket/SetDatagramSocketImplFactory/ADatagramSocket.java https://github.com/adoptium/aqa-tests/issues/3088 linux-ppc64le
 java/net/Socket/CloseAvailable.java https://github.com/adoptium/aqa-tests/issues/3088 linux-ppc64le
@@ -336,7 +336,6 @@ com/sun/jdi/ThreadMemoryLeakTest.java https://github.com/adoptium/aqa-tests/issu
 ############################################################################
 
 # jdk_util
-
 
 java/util/concurrent/tck/JSR166TestCase.java#default https://bugs.openjdk.org/browse/JDK-8377034 windows-all,linux-s390x
 java/util/concurrent/tck/JSR166TestCase.java#forkjoinpool-common-parallelism https://bugs.openjdk.org/browse/JDK-8377034 windows-all,linux-s390x
