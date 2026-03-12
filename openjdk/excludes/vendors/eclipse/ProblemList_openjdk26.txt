@@ -16,6 +16,13 @@
 
 ############################################################################
 
+# hotspot_compiler
+
+compiler/gallery/TestNormalMapping.java https://github.com/adoptium/infrastructure/issues/211 macosx-all
+compiler/gallery/TestParticleLife.java https://github.com/adoptium/infrastructure/issues/211 macosx-all
+
+############################################################################
+
 # hotspot_jre
 
 ############################################################################
@@ -26,7 +33,7 @@ runtime/cds/TestDefaultArchiveLoading.java#coops_nocoh https://github.com/adopti
 runtime/cds/TestDefaultArchiveLoading.java#nocoops_nocoh https://github.com/adoptium/adoptium-support/issues/937 macosx-x64
 runtime/cds/appcds/complexURI/ComplexURITest.java https://github.com/adoptium/adoptium-support/issues/937 macosx-x64
 runtime/cds/appcds/TransformInterfaceOfLambda.java https://github.com/adoptium/adoptium-support/issues/937 macosx-x64
-runtime/cds/NonJVMVariantLocation.java  https://github.com/adoptium/adoptium-support/issues/937 macosx-x64
+runtime/cds/NonJVMVariantLocation.java https://github.com/adoptium/adoptium-support/issues/937 macosx-x64
 
 ############################################################################
 
