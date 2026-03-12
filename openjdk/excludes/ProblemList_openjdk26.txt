@@ -122,6 +122,8 @@ java/net/Socks/SocksV4Test.java https://github.com/adoptium/aqa-tests/issues/593
 java/net/URL/OpenStream.java https://github.com/adoptium/aqa-tests/issues/593 linux-all
 java/net/httpclient/ConnectExceptionTest.java https://github.com/adoptium/aqa-tests/issues/593 linux-all
 java/net/httpclient/AsFileDownloadTest.java https://github.com/adoptium/temurin-build/issues/893 linux-all
+java/net/httpclient/ConnectTimeoutWithProxyAsync.java https://bugs.openjdk.org/browse/JDK-8375352 generic-all
+java/net/httpclient/ConnectTimeoutWithProxySync.java https://bugs.openjdk.org/browse/JDK-8375352 generic-all
 java/net/httpclient/StreamingBody.java https://github.com/adoptium/temurin-build/issues/893 linux-all
 java/net/httpclient/http2/ContinuationFrameTest.java https://github.com/adoptium/temurin-build/issues/893 linux-all
 java/net/httpclient/SpecialHeadersTest.java https://github.com/adoptium/temurin-build/issues/893 linux-all
