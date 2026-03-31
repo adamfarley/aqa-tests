@@ -48,7 +48,6 @@ java/lang/ClassLoader/ExtDirs.java https://github.com/eclipse-openj9/openj9/issu
 java/lang/ClassLoader/LibraryPathProperty.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 java/lang/ClassLoader/nativeLibrary/NativeLibraryTest.java https://github.com/eclipse-openj9/openj9/issues/14441 aix-all
 java/lang/ClassLoader/RecursiveSystemLoader.java https://github.com/eclipse-openj9/openj9/issues/3178 generic-all
-java/lang/constant/MethodTypeDescTest.java https://github.com/eclipse-openj9/openj9/issues/23494 generic-all
 java/lang/Enum/ConstantDirectoryOptimalCapacity.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 java/lang/invoke/condy/CondyNestedResolutionTest.java https://github.com/eclipse-openj9/openj9/issues/7158 aix-all
 java/lang/invoke/condy/CondyNestedTest.java https://github.com/eclipse-openj9/openj9/issues/4127 linux-ppc64le
@@ -126,7 +125,7 @@ java/lang/System/LoggerFinder/jdk/DefaultLoggerBridgeTest/DefaultLoggerBridgeTes
 java/lang/Thread/SleepSanity.java https://github.com/eclipse-openj9/openj9/issues/17638 windows-all
 java/lang/Thread/ThreadSleepEvent.java https://github.com/eclipse-openj9/openj9/issues/20166 generic-all
 java/lang/Thread/UncaughtExceptions.sh https://github.com/eclipse-openj9/openj9/issues/6690 generic-all
-java/lang/Thread/virtual/Collectable.java https://github.com/eclipse-openj9/openj9/issues/18463 linux-aarch64,linux-x64,windows-all
+java/lang/Thread/virtual/Collectable.java https://github.com/eclipse-openj9/openj9/issues/18463 linux-all,windows-all
 java/lang/Thread/virtual/JfrEvents.java https://github.com/eclipse-openj9/openj9/issues/20166 generic-all
 java/lang/Thread/virtual/StackTraces.java https://github.com/eclipse-openj9/openj9/issues/16045 generic-all
 java/lang/Thread/virtual/stress/GetStackTraceALotWhenPinned.java#id0 https://github.com/eclipse-openj9/openj9/issues/18908 linux-s390x
