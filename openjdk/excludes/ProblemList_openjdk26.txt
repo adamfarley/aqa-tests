@@ -78,6 +78,7 @@ java/lang/Thread/virtual/stress/PingPong.java#sq https://github.com/adoptium/aqa
 
 # jdk_management
 
+com/sun/management/HotSpotDiagnosticMXBean/DumpThreadsWithEliminatedLock.java https://bugs.openjdk.org/browse/JDK-8380382 linux-s390x
 com/sun/management/OperatingSystemMXBean/TestTotalSwap.java https://bugs.openjdk.java.net/browse/JDK-8255263 linux-all
 # sun/management/jmxremote/startstop/JMXStartStopTest.java https://github.com/adoptium/aqa-tests/issues/2808 linux-ppc64le
 sun/management/jmxremote/startstop/JMXStatusPerfCountersTest.java https://github.com/adoptium/aqa-tests/issues/2808 linux-ppc64le
@@ -348,8 +349,10 @@ java/util/zip/DeInflate.java https://bugs.openjdk.org/browse/JDK-8299748 linux-s
 
 # jdk_foreign
 
-java/foreign/TestNative.java https://github.com/adoptium/aqa-tests/issues/1920 generic-all
+java/foreign/TestBufferStackStress.java https://bugs.openjdk.org/browse/JDK-8373298 linux-s390x
 java/foreign/TestLargeSegmentCopy.java https://github.com/adoptium/aqa-tests/issues/4429 aix-all
+java/foreign/TestNative.java https://github.com/adoptium/aqa-tests/issues/1920 generic-all
+java/foreign/sharedclosejfr/TestSharedCloseJFR.java https://bugs.openjdk.org/browse/JDK-8371315 linux-s390x
 javax/management/mxbean/ThreadStartTest.java https://github.com/adoptium/aqa-tests/issues/4429 aix-all
 
 ############################################################################
@@ -357,6 +360,9 @@ javax/management/mxbean/ThreadStartTest.java https://github.com/adoptium/aqa-tes
 # hotspot_compiler
 
 compiler/intrinsics/TestContinuationPinningAndEA.java https://bugs.openjdk.org/browse/JDK-8349193 linux-s390x
+compiler/intrinsics/TestReturnOopSetForJFRWriteCheckpoint.java https://bugs.openjdk.org/browse/JDK-8380035 linux-s390x
+compiler/loopopts/superword/TestDoNotFilterNaNSummands.java https://bugs.openjdk.org/browse/JDK-8380036 linux-s390x
+compiler/loopopts/superword/TestMemorySegmentFilterSummands.java https://bugs.openjdk.org/browse/JDK-8380036 linux-s390x
 compiler/loopopts/superword/TestAlignVectorFuzzer.java#CompileOnly https://github.com/adoptium/aqa-tests/issues/6951 linux-riscv64
 compiler/unsafe/UnsafeCopyMemory.java https://github.com/adoptium/aqa-tests/issues/2804 aix-ppc64,linux-s390x
 compiler/jvmci/jdk.vm.ci.hotspot.test/src/jdk/vm/ci/hotspot/test/TestTranslatedException.java https://github.com/adoptium/aqa-tests/issues/3658 linux-x64,windows-x64,linux-aarch64,macosx-all
