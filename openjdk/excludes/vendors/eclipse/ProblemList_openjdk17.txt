@@ -53,6 +53,7 @@
 ############################################################################
 
 # jdk_nio
+
 java/nio/file/DirectoryStream/SecureDS.java https://github.com/adoptium/aqa-tests/issues/3635 linux-all
 
 ############################################################################ 
@@ -138,6 +139,8 @@ java/nio/file/DirectoryStream/SecureDS.java https://github.com/adoptium/aqa-test
 ############################################################################
 
 # hotspot_runtime
+
+runtime/os/AvailableProcessors.java https://github.com/adoptium/infrastructure/issues/4100 linux-aarch64
 
 ############################################################################
 
