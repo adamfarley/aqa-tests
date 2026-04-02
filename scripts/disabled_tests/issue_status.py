@@ -23,6 +23,8 @@ LOG = logging.getLogger()
 GITHUB_USER_ENV = "AQA_ISSUE_TRACKER_GITHUB_USER"
 GITHUB_TOKEN_ENV = "AQA_ISSUE_TRACKER_GITHUB_TOKEN"
 
+return_code = 0
+
 # Partial URL segments used to filter exceptional issues
 EXCEPTIONS = [
     '/aqa-tests/issues/1297',
@@ -176,16 +178,18 @@ def should_exclude(url) -> Tuple[bool, str]:
             return True, exception
     return False, ''
 
-
 def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[models.SchemeWithStatus]:
     try:
         issue_status: Status = future.result()
     except HandlerException as he:
         LOG.error(f"{log_prefix} Error when handling {url!r}: {he}")
+        return_code=1
     except NoHandlerFoundException:
         LOG.error(f"{log_prefix} No handler found for {url!r}")
+        return_code=1
     except Exception as e:
         LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
+        return_code=1
     else:
         LOG.info(f"{log_prefix} Ended processing for {url!r}: {issue_status.name}")
         issues_with_status = augment_with_status(url_to_issues[url], issue_status)
@@ -277,6 +281,8 @@ def main():
         indent=2,
     )
 
+    return return_code
+
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
