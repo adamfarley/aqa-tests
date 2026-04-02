@@ -190,23 +190,17 @@ fi
 ################################################################################
 
 log_info "Checking if Python requirements are already installed."
-requirementsPresent=true
 while read rawRequirement; do
     singleRequirement="$(echo "$rawRequirement" | tr -d '[:space:]' | tr -d '\r\n')"
     if ! pip3 show "$singleRequirement" &> /dev/null; then
-        log_info "Python requirement not found: ${singleRequirement} ${#singleRequirement}"
-        requirementsPresent=false
+        log_error "One or more of the Python requirements were not found."
+        log_info "Use this command to install the requirements before rerunning this script."
+        log_info "pip3 install -q -r scripts/disabled_tests/requirements.txt"
+        exit 1
     fi
 done < scripts/disabled_tests/requirements.txt
 
-if [ "$requirementsPresent" = "true" ]; then
-    log_success "Python requirements already installed"
-else
-    log_info "One or more Python requirements not found"
-    log_info "Installing Python requirements..."
-    pip3 install -q -r scripts/disabled_tests/requirements.txt
-    log_success "Python requirements installed"
-fi
+log_success "Python requirements already installed"
 
 ################################################################################
 # Step 2: Discover disabled tests
