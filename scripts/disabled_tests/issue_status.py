@@ -28,6 +28,7 @@ return_code = 0
 # Partial URL segments used to filter exceptional issues
 EXCEPTIONS = [
     '/aqa-tests/issues/1297',
+    'https://github.ibm.com/',
 ]
 
 
@@ -179,6 +180,7 @@ def should_exclude(url) -> Tuple[bool, str]:
     return False, ''
 
 def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[models.SchemeWithStatus]:
+    global return_code
     try:
         issue_status: Status = future.result()
     except HandlerException as he:
@@ -281,6 +283,7 @@ def main():
         indent=2,
     )
 
+    global return_code
     return return_code
 
 
