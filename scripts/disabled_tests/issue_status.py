@@ -64,6 +64,7 @@ class BaseHandler(abc.ABC):
     Fetches the status of an issue given its tracking URL
     """
     STATUS_NAME_TO_ENUM = {
+        'new': Status.OPEN,
         'open': Status.OPEN,
         'closed': Status.CLOSED,
         'resolved': Status.CLOSED,
@@ -178,6 +179,7 @@ def should_exclude(url) -> Tuple[bool, str]:
         if exception in url:
             return True, exception
     return False, ''
+
 
 def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[models.SchemeWithStatus]:
     global return_code
