@@ -105,14 +105,14 @@ if [[ -d "$OUTPUT_DIR" ]]; then
         log_warning "Output directory already exists. Use -c to clear and re-run."
         exit 1
     fi
-else
-    log_info "Output directory does not exist. Creating..."
-    mkdir "$OUTPUT_DIR" || {
-        log_error "Output directory could not be created: ${OUTPUT_DIR}"
-        exit 1
-    }
-    log_info "Output directory created."
 fi
+
+log_info "Creating output directory..."
+mkdir "$OUTPUT_DIR" || {
+    log_error "Output directory could not be created: ${OUTPUT_DIR}"
+    exit 1
+}
+log_info "Output directory created."
 
 # Output file names
 EXCLUDE_FILES="${OUTPUT_DIR}/exclude_files.txt"
