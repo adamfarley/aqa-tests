@@ -232,12 +232,12 @@ log_group "parsing"
 
 log_info "Parsing exclude files..."
 cat "${EXCLUDE_FILES}" | python3 scripts/disabled_tests/exclude_parser.py -v > "${EXCLUDE_JSON}"
-validate_json_output "${EXCLUDE_JSON}" "Exclude data" || exit 1
+validate_json_file "${EXCLUDE_JSON}" "Exclude data" || exit 1
 log_success "Exclude files parsed"
 
 log_info "Parsing playlist files..."
 cat "${PLAYLIST_FILES}" | python3 scripts/disabled_tests/playlist_parser.py -v > "${PLAYLIST_JSON}"
-validate_json_output "${PLAYLIST_JSON}" "Playlist data" || exit 1
+validate_json_file "${PLAYLIST_JSON}" "Playlist data" || exit 1
 log_success "Playlist files parsed"
 
 log_endgroup
@@ -249,7 +249,7 @@ log_endgroup
 log_group "merging"
 log_info "Merging exclude and playlist data..."
 jq -s 'flatten(1)' "${EXCLUDE_JSON}" "${PLAYLIST_JSON}" > "${ALL_JSON}"
-validate_json_output "${ALL_JSON}" "Merged data" || exit 1
+validate_json_file "${ALL_JSON}" "Merged data" || exit 1
 MERGED_COUNT=$(jq 'length' "${ALL_JSON}")
 log_success "Merged $MERGED_COUNT disabled test entries"
 log_endgroup
@@ -261,7 +261,7 @@ log_endgroup
 log_group "status"
 log_info "Checking issue status..."
 cat "${ALL_JSON}" | python3 scripts/disabled_tests/issue_status.py -v > "${OUTPUT_JSON}"
-validate_json_output "${OUTPUT_JSON}" "Output data" || exit 1
+validate_json_file "${OUTPUT_JSON}" "Output data" || exit 1
 OUTPUT_COUNT=$(jq 'length' "${OUTPUT_JSON}")
 log_success "Generated output with $OUTPUT_COUNT entries"
 log_endgroup
