@@ -14,6 +14,8 @@
 
 # hotspot_all
 
+runtime/os/AvailableProcessors.java https://github.com/adoptium/infrastructure/issues/4100 linux-aarch64
+
 ############################################################################
 
 # hotspot_jre
@@ -29,6 +31,7 @@
 ############################################################################
 
 # jdk_build
+
 build/AbsPathsInImage.java https://github.com/adoptium/aqa-tests/issues/3988 generic-all
 
 ############################################################################
@@ -62,6 +65,7 @@ build/AbsPathsInImage.java https://github.com/adoptium/aqa-tests/issues/3988 gen
 ############################################################################
 
 # jdk_nio
+
 java/nio/file/DirectoryStream/SecureDS.java https://github.com/adoptium/aqa-tests/issues/3635 linux-all
 
 ############################################################################
@@ -95,7 +99,9 @@ java/nio/file/DirectoryStream/SecureDS.java https://github.com/adoptium/aqa-test
 ############################################################################
 
 # jdk_tools
+
 tools/jpackage/share/AppLauncherEnvTest.java https://github.com/adoptium/aqa-tests/issues/3232 linux-all
+
 ############################################################################
 
 # jdk_jdi
@@ -111,7 +117,6 @@ tools/jpackage/share/AppLauncherEnvTest.java https://github.com/adoptium/aqa-tes
 ############################################################################
 
 # jdk_other
-
 
 ############################################################################
 
