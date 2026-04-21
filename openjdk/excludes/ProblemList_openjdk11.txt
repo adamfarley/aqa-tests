@@ -614,7 +614,7 @@ vmTestbase/metaspace/flags/maxMetaspaceSize/TestMaxMetaspaceSize.java https://bu
 
 # hotspot_vmTestbase_vm_metaspace_0
 
-vmTestbase/metaspace/flags/maxMetaspaceSize/TestMaxMetaspaceSize.java
+vmTestbase/metaspace/flags/maxMetaspaceSize/TestMaxMetaspaceSize.java https://bugs.openjdk.org/browse/JDK-8380951 generic-all
 
 ############################################################################
 
