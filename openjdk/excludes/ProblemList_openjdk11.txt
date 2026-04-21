@@ -59,6 +59,7 @@ com/sun/management/OperatingSystemMXBean/TestTotalSwap.java https://bugs.openjdk
 
 javax/net/ssl/SSLEngine/LargePacket.java https://bugs.openjdk.org/browse/JDK-8227651 generic-all
 javax/net/ssl/ServerName/SSLEngineExplorerWithCli.java https://github.com/adoptium/aqa-tests/issues/2123 linux-all,macosx-all
+sun/security/ssl/CipherSuite/DisabledCurve.java https://bugs.openjdk.org/browse/JDK-8381551 windows-all
 sun/security/ssl/SSLSocketImpl/SSLSocketLeak.java https://github.com/adoptium/aqa-tests/issues/3811 windows-x86
 sun/security/ssl/X509TrustManagerImpl/distrust/Symantec.java https://github.com/adoptium/aqa-tests/issues/5955 generic-all
 
@@ -339,12 +340,12 @@ gc/shenandoah/jni/CriticalNativeStress.java https://github.com/adoptium/aqa-test
 runtime/cds/CheckDefaultArchiveFile.java https://github.com/adoptium/aqa-tests/issues/5645 macosx-all
 runtime/cds/TestCDSVMCrash.java https://github.com/adoptium/aqa-tests/issues/5645 macosx-all
 runtime/cds/appcds/CommandLineFlagCombo.java https://github.com/adoptium/aqa-tests/issues/5645 macosx-all
-runtime/cds/appcds/LambdaEagerInit.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+runtime/cds/appcds/LambdaEagerInit.java https://github.com/adoptium/aqa-tests/issues/5378 windows-x86
 runtime/cds/appcds/TestDumpClassListSource.java https://github.com/adoptium/aqa-tests/issues/5645 macosx-all
 runtime/cds/appcds/dynamicArchive/TestAutoCreateSharedArchiveNoDefaultArchive.java https://github.com/adoptium/aqa-tests/issues/5645 macosx-all
 #runtime/jni/nativeStack/TestNativeStack.java https://bugs.openjdk.org/browse/JDK-8311092 linux-arm
 runtime/jni/nativeStack/TestNativeStack.java https://github.com/adoptium/aqa-tests/issues/5384 aix-all,linux-arm
-runtime/logging/loadLibraryTest/LoadLibraryTest.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+runtime/logging/loadLibraryTest/LoadLibraryTest.java https://github.com/adoptium/aqa-tests/issues/5378 windows-x86
 runtime/NMT/HugeArenaTracking.java https://github.com/adoptium/aqa-tests/issues/5384 aix-all
 runtime/NMT/SafepointPollingPages.java https://github.com/adoptium/aqa-tests/issues/5900 linux-arm
 runtime/os/TestHugePageDecisionsAtVMStartup.java#THP_enabled https://bugs.openjdk.org/browse/JDK-8324580 linux-all
