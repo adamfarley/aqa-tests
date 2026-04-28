@@ -2173,6 +2173,7 @@
 				<platform>.*windows.*</platform>
 				<version>25+</version>
 				<impl>hotspot</impl>
+				<vendor>eclipse</vendor>
 			</disable>
 		</disables>
 		<variations>
@@ -2212,6 +2213,7 @@
 		<platform>.*windows.*</platform>
 		<version>25+</version>
 		<impl>hotspot</impl>
+		<vendor>eclipse</vendor>
 		<variations>
 			<variation>Mode150</variation>
 			<variation>Mode650</variation>
