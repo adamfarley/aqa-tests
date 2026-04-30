@@ -192,8 +192,12 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
         LOG.error(f"{log_prefix} No handler found for {url!r}")
         return_code=1
     except Exception as e:
-        LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
-        return_code=1
+        # Ignore "Unauthorized for url" errors as this is currently permitted.
+        if str(e) == "Unauthorized for url":
+            LOG.debug(f"{log_prefix} Ignoring access denial when handling {url!r}: {e}")
+        else:
+            LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
+            return_code=1
     else:
         LOG.info(f"{log_prefix} Ended processing for {url!r}: {issue_status.name}")
         issues_with_status = augment_with_status(url_to_issues[url], issue_status)
