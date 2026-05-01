@@ -175,6 +175,8 @@ def group_issues_by_url(issues: List[models.Scheme]) -> Dict[str, List[models.Sc
 
 
 def should_exclude(url) -> Tuple[bool, str]:
+    if url.startswith("#"):
+        return True, "Ignoring non-url comment that starts with a hash."
     for exception in EXCEPTIONS:
         if exception in url:
             return True, exception
