@@ -113,7 +113,21 @@ class GitHubHandler(BaseHandler):
         resp.raise_for_status()
         resp_json = resp.json()
         status_name = resp_json["state"]
-        return self.name_to_status(status_name)
+        status_enum = self.name_to_status(status_name)
+        labels_list = resp_json.get('labels', {})
+        if status_enum == Status.OPEN:
+            return status_enum
+        else:
+            return status_enum + ": " + resolution(labels_list)
+
+    def resolution(labels_list):
+        for single_label in labels_list:
+            if single_label['name'] == 'wontfix' or single_label['name'] == 'exclusion:permanent':
+                return "Won't Fix"
+            elif single_label['name'] == 'fixed':
+                return "Fixed. Action: Unexclude"
+            else:
+                return "Unknown resolution. Action: Add label: fixed wontfix exclusion:permanent"
 
 
 class BugsOpenJdkHandler(BaseHandler):
@@ -134,7 +148,22 @@ class BugsOpenJdkHandler(BaseHandler):
         resp.raise_for_status()
         resp_json = resp.json()
         status_name = resp_json.get('fields', {}).get('status', {}).get('name', '').lower()
-        return self.name_to_status(status_name)
+        status_enum = self.name_to_status(status_name)
+        resolution = resp_json.get('fields', {}).get('resolution', '')
+        if status_enum == Status.OPEN:
+            return status_enum
+        else:
+            return status_enum + ": " + resolution_parser(resolution)
+
+    def resolution_parser(resolution):
+        if resolution == 'null' or resolution == '':
+            return "Unknown resolution. Action: Investigate"
+        elif resolution == "Won't Fix":
+            return "Won't Fix"
+        elif resolution == "Fixed":
+            return  resolution + ". Action: Unexclude"
+        else:
+            return resolution + ". Action: Identify next step"
 
 
 class Dispatcher:
