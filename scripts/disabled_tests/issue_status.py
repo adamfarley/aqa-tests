@@ -195,7 +195,7 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
         return_code=1
     except Exception as e:
         # Ignore "Unauthorized for url" errors as this is currently permitted.
-        if str(e) == "Unauthorized for url":
+        if "Unauthorized for url" in str(e):
             LOG.debug(f"{log_prefix} Ignoring access denial when handling {url!r}: {e}")
         else:
             LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
