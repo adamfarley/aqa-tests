@@ -116,18 +116,17 @@ class GitHubHandler(BaseHandler):
         status_enum = self.name_to_status(status_name)
         labels_list = resp_json.get('labels', {})
         if status_enum == Status.OPEN:
-            return status_enum
+            return (status_enum, "OPEN",)
         else:
-            return status_enum + ": " + resolution(labels_list)
+            return (status_enum, self.resolution_parser(labels_list),)
 
-    def resolution(labels_list):
+    def resolution_parser(self, labels_list):
         for single_label in labels_list:
             if single_label['name'] == 'wontfix' or single_label['name'] == 'exclusion:permanent':
                 return "Won't Fix"
             elif single_label['name'] == 'fixed':
                 return "Fixed. Action: Unexclude"
-            else:
-                return "Unknown resolution. Action: Add label: fixed wontfix exclusion:permanent"
+        return "Unknown resolution. Action: Add label: fixed wontfix exclusion:permanent"
 
 
 class BugsOpenJdkHandler(BaseHandler):
@@ -151,19 +150,19 @@ class BugsOpenJdkHandler(BaseHandler):
         status_enum = self.name_to_status(status_name)
         resolution = resp_json.get('fields', {}).get('resolution', '')
         if status_enum == Status.OPEN:
-            return status_enum
+            return (status_enum, "OPEN",)
         else:
-            return status_enum + ": " + resolution_parser(resolution)
+            return (status_enum, "CLOSED: " + self.resolution_parser(resolution),)
 
-    def resolution_parser(resolution):
+    def resolution_parser(self, resolution):
         if resolution == 'null' or resolution == '':
             return "Unknown resolution. Action: Investigate"
         elif resolution == "Won't Fix":
             return "Won't Fix"
         elif resolution == "Fixed":
-            return  resolution + ". Action: Unexclude"
+            return "Fixed. Action: Unexclude"
         else:
-            return resolution + ". Action: Identify next step"
+            return "Unknown resolution \"" + resolution + "\". Action: Investigate."
 
 
 class Dispatcher:
@@ -215,22 +214,24 @@ def should_exclude(url) -> Tuple[bool, str]:
 def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[models.SchemeWithStatus]:
     global return_code
     try:
-        issue_status: Status = future.result()
+        result_tuple = future.result()
+        issue_status: Status = result_tuple[0]
+        complex_status: str = result_tuple[1]
     except HandlerException as he:
         LOG.error(f"{log_prefix} Error when handling {url!r}: {he}")
-        return_code=1
+        return_code = 1
     except NoHandlerFoundException:
         LOG.error(f"{log_prefix} No handler found for {url!r}")
-        return_code=1
+        return_code = 1
     except Exception as e:
         # Ignore "Unauthorized for url" errors as this is currently permitted.
         if "Unauthorized for url" in str(e):
             LOG.debug(f"{log_prefix} Ignoring access denial when handling {url!r}: {e}")
         else:
             LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
-            return_code=1
+            return_code = 1
     else:
-        LOG.info(f"{log_prefix} Ended processing for {url!r}: {issue_status.name}")
+        LOG.info(f"{log_prefix} Ended processing for {url!r}: {complex_status}")
         issues_with_status = augment_with_status(url_to_issues[url], issue_status)
         return issues_with_status
     # return an empty list if an error was caught
