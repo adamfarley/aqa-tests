@@ -148,10 +148,10 @@ class BugsOpenJdkHandler(BaseHandler):
         resp_json = resp.json()
         status_name = resp_json.get('fields', {}).get('status', {}).get('name', '').lower()
         status_enum = self.name_to_status(status_name)
-        resolution = resp_json.get('fields', {}).get('resolution', {}).get('name', '')
         if status_enum == Status.OPEN:
             return (status_enum, "OPEN",)
         else:
+            resolution = resp_json.get('fields', {}).get('resolution', {}).get('name', '')
             return (status_enum, "CLOSED: " + self.resolution_parser(resolution),)
 
     def resolution_parser(self, resolution):
