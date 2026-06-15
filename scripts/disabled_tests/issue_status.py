@@ -127,6 +127,8 @@ class BaseHandler(abc.ABC):
 class GitHubHandler(BaseHandler):
     """
     URL handler for GitHub
+    Returns (Status, Resolution, Recommended_Action, Fixed_JDK_Versions)
+    Note: For GitHub issues, Fixed_JDK_Versions is left as a fixed string which is parsed correctly later.
     """
     GITHUB_API_BASE_URL = f'https://api.github.com/repos'
 
@@ -141,22 +143,28 @@ class GitHubHandler(BaseHandler):
         status_enum = self.name_to_status(status_name)
         labels_list = resp_json.get('labels', [])
         if status_enum == Status.OPEN:
-            return (status_enum, "OPEN",)
+            return (status_enum, "None", "None", "None")
         else:
-            return (status_enum, "CLOSED: " + self.resolution_parser(labels_list),)
+            resolution_and_action = self.resolution_parser(labels_list)
+            return (status_enum, resolution_and_action[0],resolution_and_action[1],"See JDK_VERSION")
 
     def resolution_parser(self, labels_list):
+        """
+        Parses Github issue labels to identify resolution if possible.
+        Returns (Resolution, Recommended_Action)
+        """
         for single_label in labels_list:
             if single_label['name'] == 'wontfix' or single_label['name'] == 'exclusion:permanent':
-                return "Won't Fix"
+                return ('Wont Fix', 'None')
             elif single_label['name'] == 'fixed':
-                return "Fixed. Action: Unexclude"
-        return "Fixed. Action: Unexclude or add issue label: wontfix / exclusion:permanent"
+                return ('Fixed', 'Unexclude')
+        return ('Fixed', 'Unexclude or add issue label: wontfix / exclusion:permanent')
 
 
 class BugsOpenJdkHandler(BaseHandler):
     """
     URL handler for bugs.openjdk (Jira-based board)
+    Returns (Status, Resolution, Recommended_Action)
     """
     BUGS_OPENJDK_API_BASE_URL = f'https://bugs.openjdk.java.net/rest/api/latest/issue'
 
@@ -171,16 +179,21 @@ class BugsOpenJdkHandler(BaseHandler):
         status_name = resp_json.get('fields', {}).get('status', {}).get('name', '').lower()
         status_enum = self.name_to_status(status_name)
         if status_enum == Status.OPEN:
-            return (status_enum, "OPEN",)
+            return (status_enum, "None", "None", "None",)
         else:
             resolution = ((resp_json.get('fields', {}).get('resolution') or {}).get('name') or '')
-            return (status_enum, "CLOSED: " + self.resolution_parser(resolution, resp_json),)
+            resolution_facts = self.resolution_parser(resolution, resp_json)
+            return (status_enum, resolution_facts[0], resolution_facts[1], resolution_facts[2],)
 
     def resolution_parser(self, resolution, resp_json):
+        """
+        Parses OpenJDK issue resolution and, if fixed, attempts to identify which JDK versions are patched.
+        Returns (Resolution, Recommended_Action, Fixed_JDK_Versions)
+        """
         if resolution == 'null' or resolution == '':
-            return "Unknown resolution. Action: Investigate"
+            return ("Unknown", "Investigate", "None")
         elif resolution == "Won't Fix":
-            return "Won't Fix"
+            return ("Won't Fix", "None", "None")
         elif resolution == "Fixed":
             # Identify fix commit links while ignoring -dev links
             fix_commits_list = []
@@ -205,7 +218,7 @@ class BugsOpenJdkHandler(BaseHandler):
             versions_list = []
             version_plus = 0
             if len(fix_commits_list) == 0:
-                return "Fixed but unpropagated. No action."
+                return ("Fixed", "None yet. Patch unpropagated")
             for commit_url in fix_commits_list:
                 if "/jdk/commit" in commit_url:
                     *_, commit_key = commit_url.split('/')  # get the element after the last slash
@@ -263,11 +276,11 @@ class BugsOpenJdkHandler(BaseHandler):
             if version_plus:
                 versions_string += str(version_plus) + "+,"
             if versions_string:
-                return "Fixed. Action: Unexclude for JDK: " + versions_string[:-1]
+                return ("Fixed", "Unexclude for JDK: " + versions_string[:-1], versions_string[:-1])
             else:
-                return "Fixed. No commits found."
+                return ("Fixed", "None yet. No commits found.", "None")
         else:
-            return "\"" + resolution + "\". Action: Unexclude or change link."
+            return (resolution, "Unexclude or change link. Resolution not recognised.", "Unknown")
 
     def comments_parser(self, comments, URLs_list: List[str]):
         authors_list = ["dukebot", "roboduke", "hgupdate"]
@@ -312,7 +325,7 @@ class Dispatcher:
         raise NoHandlerFoundException()
 
 
-def augment_with_status(issues, issue_status):
+def augment_with_status(issues, issue_status, issue_resolution, complex_status, fixed_jdk_versions):
     """
     Augment all issue items with the provided status
     """
@@ -320,6 +333,9 @@ def augment_with_status(issues, issue_status):
         models.SchemeWithStatus(
             **issue,
             ISSUE_TRACKER_STATUS=issue_status.scheme_name,
+            ISSUE_TRACKER_RESOLUTION=issue_resolution,
+            ISSUE_TRACKER_ACTION=complex_status,
+            ISSUE_TRACKED_FIXED_JDKS=fixed_jdk_versions,
         )
         for issue in issues
     ]
@@ -352,7 +368,9 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
     try:
         result_tuple = future.result()
         issue_status: Status = result_tuple[0]
-        complex_status: str = result_tuple[1]
+        issue_resolution: str = result_tuple[1]
+        recommended_action: str = result_tuple[2]
+        fixed_jdk_versions: string = result_tuple[3]
     except HandlerException as he:
         LOG.error(f"{log_prefix} Error when handling {url!r}: {he}")
         return_code = 1
@@ -367,8 +385,11 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
             LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
             return_code = 1
     else:
-        LOG.info(f"{log_prefix} Ended processing for {url!r}: {complex_status}")
-        issues_with_status = augment_with_status(url_to_issues[url], issue_status)
+        if issue_status == Status.OPEN:
+            LOG.info(f"{log_prefix} Ended processing for {url!r}: Open")
+        else:
+            LOG.info(f"{log_prefix} Ended processing for {url!r}: Closed - {issue_resolution}, Action: {recommended_action}")
+        issues_with_status = augment_with_status(url_to_issues[url], issue_status, issue_resolution, recommended_action, fixed_jdk_versions)
         return issues_with_status
     # return an empty list if an error was caught
     return []

@@ -13,6 +13,9 @@ class Scheme(TypedDict):
 
 class SchemeWithStatus(Scheme):
     ISSUE_TRACKER_STATUS: str
+    ISSUE_TRACKER_RESOLUTION: str
+    ISSUE_TRACKER_ACTION: str
+    ISSUE_TRACKED_FIXED_JDKS: str
 
 
 @datacls.dataclass
