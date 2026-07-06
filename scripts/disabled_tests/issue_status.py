@@ -127,8 +127,6 @@ class BaseHandler(abc.ABC):
 class GitHubHandler(BaseHandler):
     """
     URL handler for GitHub
-    Returns (Status, Resolution, Recommended_Action, Fixed_JDK_Versions)
-    Note: For GitHub issues, Fixed_JDK_Versions is left as a fixed string which is parsed correctly later.
     """
     GITHUB_API_BASE_URL = f'https://api.github.com/repos'
 
@@ -143,28 +141,22 @@ class GitHubHandler(BaseHandler):
         status_enum = self.name_to_status(status_name)
         labels_list = resp_json.get('labels', [])
         if status_enum == Status.OPEN:
-            return (status_enum, "None", "None", "None")
+            return (status_enum, "OPEN",)
         else:
-            resolution_and_action = self.resolution_parser(labels_list)
-            return (status_enum, resolution_and_action[0],resolution_and_action[1],"See JDK_VERSION")
+            return (status_enum, "CLOSED: " + self.resolution_parser(labels_list),)
 
     def resolution_parser(self, labels_list):
-        """
-        Parses Github issue labels to identify resolution if possible.
-        Returns (Resolution, Recommended_Action)
-        """
         for single_label in labels_list:
             if single_label['name'] == 'wontfix' or single_label['name'] == 'exclusion:permanent':
-                return ('Wont Fix', 'None')
+                return "Won't Fix"
             elif single_label['name'] == 'fixed':
-                return ('Fixed', 'Unexclude')
-        return ('Fixed', 'Unexclude or add issue label: wontfix / exclusion:permanent')
+                return "Fixed. Action: Unexclude"
+        return "Fixed. Action: Unexclude or add issue label: wontfix / exclusion:permanent"
 
 
 class BugsOpenJdkHandler(BaseHandler):
     """
     URL handler for bugs.openjdk (Jira-based board)
-    Returns (Status, Resolution, Recommended_Action)
     """
     BUGS_OPENJDK_API_BASE_URL = f'https://bugs.openjdk.java.net/rest/api/latest/issue'
 
@@ -179,21 +171,16 @@ class BugsOpenJdkHandler(BaseHandler):
         status_name = resp_json.get('fields', {}).get('status', {}).get('name', '').lower()
         status_enum = self.name_to_status(status_name)
         if status_enum == Status.OPEN:
-            return (status_enum, "None", "None", "None",)
+            return (status_enum, "OPEN",)
         else:
             resolution = ((resp_json.get('fields', {}).get('resolution') or {}).get('name') or '')
-            resolution_facts = self.resolution_parser(resolution, resp_json)
-            return (status_enum, resolution_facts[0], resolution_facts[1], resolution_facts[2],)
+            return (status_enum, "CLOSED: " + self.resolution_parser(resolution, resp_json),)
 
     def resolution_parser(self, resolution, resp_json):
-        """
-        Parses OpenJDK issue resolution and, if fixed, attempts to identify which JDK versions are patched.
-        Returns (Resolution, Recommended_Action, Fixed_JDK_Versions)
-        """
         if resolution == 'null' or resolution == '':
-            return ("Unknown", "Investigate", "None")
+            return "Unknown resolution. Action: Investigate"
         elif resolution == "Won't Fix":
-            return ("Won't Fix", "None", "None")
+            return "Won't Fix"
         elif resolution == "Fixed":
             # Identify fix commit links while ignoring -dev links
             fix_commits_list = []
@@ -218,7 +205,7 @@ class BugsOpenJdkHandler(BaseHandler):
             versions_list = []
             version_plus = 0
             if len(fix_commits_list) == 0:
-                return ("Fixed", "None yet. Patch unpropagated")
+                return "Fixed but unpropagated. No action."
             for commit_url in fix_commits_list:
                 if "/jdk/commit" in commit_url:
                     *_, commit_key = commit_url.split('/')  # get the element after the last slash
@@ -276,11 +263,11 @@ class BugsOpenJdkHandler(BaseHandler):
             if version_plus:
                 versions_string += str(version_plus) + "+,"
             if versions_string:
-                return ("Fixed", "Unexclude for JDK: " + versions_string[:-1], versions_string[:-1])
+                return "Fixed. Action: Unexclude for JDK: " + versions_string[:-1]
             else:
-                return ("Fixed", "None yet. No commits found.", "None")
+                return "Fixed. No commits found."
         else:
-            return (resolution, "Unexclude or change link. Resolution not recognised.", "Unknown")
+            return "\"" + resolution + "\". Action: Unexclude or change link."
 
     def comments_parser(self, comments, URLs_list: List[str]):
         authors_list = ["dukebot", "roboduke", "hgupdate"]
@@ -325,7 +312,7 @@ class Dispatcher:
         raise NoHandlerFoundException()
 
 
-def augment_with_status(issues, issue_status, issue_resolution, complex_status, fixed_jdk_versions):
+def augment_with_status(issues, issue_status):
     """
     Augment all issue items with the provided status
     """
@@ -333,9 +320,6 @@ def augment_with_status(issues, issue_status, issue_resolution, complex_status, 
         models.SchemeWithStatus(
             **issue,
             ISSUE_TRACKER_STATUS=issue_status.scheme_name,
-            ISSUE_TRACKER_RESOLUTION=issue_resolution,
-            ISSUE_TRACKER_ACTION=complex_status,
-            ISSUE_TRACKED_FIXED_JDKS=fixed_jdk_versions,
         )
         for issue in issues
     ]
@@ -345,18 +329,19 @@ def augment_with_status(issues, issue_status, issue_resolution, complex_status, 
 def group_issues_by_url(issues: List[models.Scheme]) -> Dict[str, List[models.Scheme]]:
     url_to_issues = defaultdict(list)
     for issue in issues:
-        if issue["ISSUE_TRACKER"].startswith("#"):
-            url_to_issues[issue["ISSUE_TRACKER"].strip()].append(issue)
-        else: 
-            urls_list = issue["ISSUE_TRACKER"].split(",")
-            for url in urls_list:
+        possible_urls_list = issue["ISSUE_TRACKER"].replace(","," ").split()
+        for possible_url in possible_urls_list:
+            if possible_url.startswith(("http://", "https://")):
+                url = possible_url
+                if url.endswith("."):
+                    url = url[:-1]
                 url_to_issues[url.strip()].append(issue)
     return url_to_issues
 
 
 def should_exclude(url) -> Tuple[bool, str]:
-    if url.startswith("#"):
-        return True, "Ignoring non-url comment that starts with a hash."
+    if not url.startswith("http"):
+        return True, "Ignoring non-url."
     for exception in EXCEPTIONS:
         if exception in url:
             return True, exception
@@ -368,9 +353,7 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
     try:
         result_tuple = future.result()
         issue_status: Status = result_tuple[0]
-        issue_resolution: str = result_tuple[1]
-        recommended_action: str = result_tuple[2]
-        fixed_jdk_versions: string = result_tuple[3]
+        complex_status: str = result_tuple[1]
     except HandlerException as he:
         LOG.error(f"{log_prefix} Error when handling {url!r}: {he}")
         return_code = 1
@@ -385,11 +368,8 @@ def _handle_completed_future(future, log_prefix, url, url_to_issues) -> List[mod
             LOG.error(f"{log_prefix} Uncaught exception for {url!r}: {e}")
             return_code = 1
     else:
-        if issue_status == Status.OPEN:
-            LOG.info(f"{log_prefix} Ended processing for {url!r}: Open")
-        else:
-            LOG.info(f"{log_prefix} Ended processing for {url!r}: Closed - {issue_resolution}, Action: {recommended_action}")
-        issues_with_status = augment_with_status(url_to_issues[url], issue_status, issue_resolution, recommended_action, fixed_jdk_versions)
+        LOG.info(f"{log_prefix} Ended processing for {url!r}: {complex_status}")
+        issues_with_status = augment_with_status(url_to_issues[url], issue_status)
         return issues_with_status
     # return an empty list if an error was caught
     return []
@@ -444,38 +424,54 @@ def is_known_url_format(url: str):
     return False
 
 
-def minimal_issues_check(issues: List[models.Scheme], auth):
+def minimal_issues_check(issues: List[models.Scheme], auth, output_json):
     global return_code
+    output_json_contents = []
 
     raw_url_to_issues = group_issues_by_url(issues)
 
     for url, issues in raw_url_to_issues.items():
         # Ignore urls that are actually comments.
-        if url.startswith("#"):
-            continue
-
         if not url.startswith("http"):
-            LOG.error(f"\"{url!r}\" is not a valid url.")
-            return_code = 1
             continue
 
         # If a url has a known format, only check syntax to save time.
         if is_known_url_format(url):
-            LOG.info(f"{url!r} uses a known url format.")
+            message = f"{url!r} uses a known url format."
+            LOG.info(message)
+            output_json_contents.append(message)
             continue
 
         # If this url does not match a known url format, test it directly.
-        session = requests.Session()
-        if url.startswith("https://github.com/"):
-            resp = session.head(url, allow_redirects=True, auth=auth)
-        else:
-            resp = session.head(url)
-        acceptable_return_codes = [405, 429]
-        if resp.status_code < 404 or resp.status_code in acceptable_return_codes:
-            LOG.info(f"{url!r} exists. Status code {resp.status_code}")
-        else:
-            LOG.error(f"{url!r} cannot be found. Status code {resp.status_code}")
+        try:
+            session = requests.Session()
+            if url.startswith("https://github.com/"):
+                resp = session.head(url, allow_redirects=True, auth=auth)
+            else:
+                resp = session.head(url)
+
+            acceptable_return_codes = [405, 429]
+            if resp.status_code < 404 or resp.status_code in acceptable_return_codes:
+                message = f"{url!r} exists. Status code {resp.status_code}"
+                LOG.info(message)
+                output_json_contents.append(message)
+            else:
+                message = f"{url!r} cannot be found. Status code {resp.status_code}"
+                LOG.error(message)
+                output_json_contents.append("ERROR: " + message)
+                return_code = 1
+
+        except RequestException as re:
+            LOG.error(f'Uncaught exception while processing {playlist_path!r} : {e}')
             return_code = 1
+
+    if not getattr(output_json, 'name', '<unknown>') in ['<unknown>', '<stdout>']:
+        LOG.info(f"Outputting JSON to {getattr(output_json, 'name', '<unknown>')}")
+        json.dump(
+            obj=output_json_contents,
+            fp=output_json,
+            indent=2,
+        )
 
 
 def main():
@@ -523,7 +519,7 @@ def main():
         auth = None
         if all([args.github_user, args.github_token]):
             auth = requests.auth.HTTPBasicAuth(username=args.github_user, password=args.github_token)
-        minimal_issues_check(issues, auth)
+        minimal_issues_check(issues, auth, args.outfile)
         LOG.info("Script complete.")
         return return_code
 
