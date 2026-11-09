@@ -113,7 +113,6 @@ java/nio/channels/DatagramChannel/PromiscuousIPv6.java https://github.com/adopti
 
 # jdk_tools
 
-tools/jpackage/share/AppLauncherEnvTest.java https://github.com/adoptium/aqa-tests/issues/3232 linux-all
 jdk/jshell/UserJdiUserRemoteTest.java https://github.com/adoptium/infrastructure/issues/4326 macosx-x64
 
 ############################################################################
