@@ -413,4 +413,65 @@ test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all
         self.assertTrue(lines[0].startswith('#test1.java\t'))
         self.assertTrue(any(line.strip() == 'test1.java https://bugs.openjdk.java.net/browse/JDK-5678 linux-x64,macosx-all' for line in lines))
 
+    def test_different_issue_deduplicates_overlapping_platforms(self):
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-x64,windows-x64\n")
+        
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-5678',
+            'linux-x64,macosx-all'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        
+        self.assertTrue(lines[0].startswith('#test1.java'))
+        # New line should deduplicate linux-x64: linux-x64,macosx-all,windows-x64
+        self.assertTrue(any(line.strip() == 'test1.java https://bugs.openjdk.java.net/browse/JDK-5678 linux-x64,macosx-all,windows-x64' for line in lines))
+
+    def test_different_issue_conflicting_arch_raises_error(self):
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-x64\n")
+        
+        with self.assertRaises(ExcludeCommandError) as cm:
+            add_exclusion_to_file(
+                self.temp_file.name,
+                'test1.java',
+                'https://bugs.openjdk.java.net/browse/JDK-5678',
+                'linux-all'
+            )
+        self.assertIn("Conflicting platforms", str(cm.exception))
+
+    def test_crlf_line_endings_preserved(self):
+        with open(self.temp_file.name, 'wb') as f:
+            f.write(b"test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all\r\n")
+        
+        # Test in-place update with CRLF
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-1234',
+            'linux-x64'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'rb') as f:
+            raw_content = f.read()
+        
+        self.assertIn(b"test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all,linux-x64\r\n", raw_content)
+
+        # Test new line added with CRLF
+        result2 = add_exclusion_to_file(
+            self.temp_file.name,
+            'test2.java',
+            'https://bugs.openjdk.java.net/browse/JDK-9999',
+            'windows-x64'
+        )
+        self.assertTrue(result2)
+        with open(self.temp_file.name, 'rb') as f:
+            raw_content2 = f.read()
+        
+        self.assertTrue(raw_content2.endswith(b"test2.java https://bugs.openjdk.java.net/browse/JDK-9999 windows-x64\r\n"))
+
 # Made with Bob
