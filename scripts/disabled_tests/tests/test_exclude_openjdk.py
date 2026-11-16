@@ -308,4 +308,109 @@ test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all
         non_empty_lines = [l for l in lines if l.strip() and not l.strip().startswith('#')]
         self.assertEqual(len(non_empty_lines), 1)
 
+    def test_different_issue_comments_existing_and_appends_new(self):
+        # Existing line has issue JDK-1234 on macosx-all
+        # Add exclusion for same test with issue JDK-9999 on linux-x64
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-9999',
+            'linux-x64'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        
+        # Existing line should be commented out
+        self.assertTrue(any(line.startswith('#test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all') for line in lines))
+        # New line should combine new platform and existing platform
+        self.assertTrue(any(line.strip() == 'test1.java https://bugs.openjdk.java.net/browse/JDK-9999 linux-x64,macosx-all' for line in lines))
+
+    def test_matching_issue_different_os_appends_platform(self):
+        # Existing line: test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all
+        # Add exclusion with same issue on linux-x64 (different OS)
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-1234',
+            'linux-x64'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        
+        active_lines = [l.strip() for l in lines if l.strip() and not l.strip().startswith('#')]
+        self.assertEqual(len(active_lines), 1)
+        self.assertEqual(active_lines[0], 'test1.java https://bugs.openjdk.java.net/browse/JDK-1234 macosx-all,linux-x64')
+
+    def test_matching_issue_same_os_deduplicates_and_updates(self):
+        # Create temp file with multiple platforms
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-x64,windows-x64\n")
+        
+        # Add exclusion with same issue on linux-aarch64 (same OS 'linux', different non-all arch)
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-1234',
+            'linux-aarch64'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        
+        active_lines = [l.strip() for l in lines if l.strip() and not l.strip().startswith('#')]
+        self.assertEqual(len(active_lines), 1)
+        self.assertEqual(active_lines[0], 'test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-x64,windows-x64,linux-aarch64')
+
+    def test_matching_issue_same_os_conflict_arch_all_raises_error(self):
+        # Existing line: test1.java on linux-x64
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-x64\n")
+        
+        # Adding linux-all should raise ExcludeCommandError because one arch is 'all'
+        with self.assertRaises(ExcludeCommandError) as cm:
+            add_exclusion_to_file(
+                self.temp_file.name,
+                'test1.java',
+                'https://bugs.openjdk.java.net/browse/JDK-1234',
+                'linux-all'
+            )
+        self.assertIn("Conflicting platforms", str(cm.exception))
+        self.assertIn("linux-x64", str(cm.exception))
+        self.assertIn("linux-all", str(cm.exception))
+
+    def test_matching_issue_existing_all_new_specific_arch_raises_error(self):
+        # Existing line: test1.java on linux-all
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java https://bugs.openjdk.java.net/browse/JDK-1234 linux-all\n")
+        
+        with self.assertRaises(ExcludeCommandError) as cm:
+            add_exclusion_to_file(
+                self.temp_file.name,
+                'test1.java',
+                'https://bugs.openjdk.java.net/browse/JDK-1234',
+                'linux-x64'
+            )
+        self.assertIn("Conflicting platforms", str(cm.exception))
+        self.assertIn("linux-all", str(cm.exception))
+        self.assertIn("linux-x64", str(cm.exception))
+
+    def test_tab_separated_existing_line(self):
+        with open(self.temp_file.name, 'w') as f:
+            f.write("test1.java\thttps://bugs.openjdk.java.net/browse/JDK-1234\tmacosx-all\n")
+        
+        result = add_exclusion_to_file(
+            self.temp_file.name,
+            'test1.java',
+            'https://bugs.openjdk.java.net/browse/JDK-5678',
+            'linux-x64'
+        )
+        self.assertTrue(result)
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        
+        self.assertTrue(lines[0].startswith('#test1.java\t'))
+        self.assertTrue(any(line.strip() == 'test1.java https://bugs.openjdk.java.net/browse/JDK-5678 linux-x64,macosx-all' for line in lines))
+
 # Made with Bob
