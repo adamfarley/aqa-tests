@@ -133,8 +133,7 @@ class Disable(RawDisable):
         for url_node in issue_url_nodes:
             text = (url_node.text or '').strip()
             if "\n" in text or "\r" in text:
-                LOG.error('disable node has a forbidden new line character inside the comment tag.')
-                sys.exit(1)
+                raise DisableNodeProcessingException('disable node has a forbidden new line character inside the comment tag.')
             if not text:
                 continue
             issue_urls.append(text)
@@ -201,12 +200,8 @@ def parse_test(raw_test: RawTest) -> List[Disable]:
 
     disables = []
     for raw_disable in test.disables:
-        try:
-            disable = Disable.from_raw_disable(raw_disable)
-            disables.append(disable)
-        except DisableNodeProcessingException as e:
-            LOG.error(f'{raw_test.playlist_file.path}:{raw_disable.node.sourceline} : {e}')
-            sys.exit(1)
+        disable = Disable.from_raw_disable(raw_disable)
+        disables.append(disable)
     return disables
 
 
@@ -215,12 +210,8 @@ def parse_file(playlist_path: str) -> List[Disable]:
 
     disables_from_file = []
     for test in playlist.raw_tests:
-        try:
-            disables = parse_test(test)
-            disables_from_file.extend(disables)
-        except TestNodeProcessingException as e:
-            LOG.error(f'{playlist_path}:{test.node.sourceline} : {e}')
-            sys.exit(1)
+        disables = parse_test(test)
+        disables_from_file.extend(disables)
     return disables_from_file
 
 
@@ -228,14 +219,9 @@ def parse_all_files(playlist_files: Iterable[str]) -> List[Disable]:
     all_disables: List[Disable] = []
     for playlist_path in playlist_files:
         LOG.debug(f"Processing {playlist_path!r}...")
-        try:
-            disables = parse_file(playlist_path)
-        except Exception as e:
-            LOG.error(f'Uncaught exception while processing {playlist_path!r} : {e}')
-            sys.exit(1)
-        else:
-            all_disables.extend(disables)
-            LOG.info(f"Processed {playlist_path!r} : n_disables={len(disables)}")
+        disables = parse_file(playlist_path)
+        all_disables.extend(disables)
+        LOG.info(f"Processed {playlist_path!r} : n_disables={len(disables)}")
     return all_disables
 
 
@@ -256,7 +242,11 @@ def main():
     LOG.debug("Taking file list from <stdin>")
     playlist_files = [line.rstrip() for line in sys.stdin.readlines()]  # remove the \n from each lines
 
-    all_exclusions = parse_all_files(playlist_files)
+    try:
+        all_exclusions = parse_all_files(playlist_files)
+    except Exception as e:
+        LOG.error(f"Error processing playlist files: {e}")
+        sys.exit(1)
 
     # convert to schemed format
     json_exclusions = [excl.to_scheme() for excl in all_exclusions]

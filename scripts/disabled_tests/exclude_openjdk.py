@@ -293,8 +293,18 @@ def add_exclusion_to_file(file_path: str, testcase: str, issue_url: str, platfor
     Raises:
         ExcludeCommandError: If conflicting platforms are detected
     """
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', newline='') as f:
         lines = f.readlines()
+    
+    # Detect line ending from file content without normalising existing lines
+    eol = "\n"
+    for line in lines:
+        if line.endswith("\r\n"):
+            eol = "\r\n"
+            break
+        elif line.endswith("\n"):
+            eol = "\n"
+            break
     
     # Identify if there is an existing uncommented line for this testcase
     existing_line_idx = None
@@ -349,32 +359,44 @@ def add_exclusion_to_file(file_path: str, testcase: str, issue_url: str, platfor
                 print(f"  ⚠️  Exclusion already exists in {os.path.basename(file_path)}")
                 return False
             
-            # Update the existing line in place
-            lines[existing_line_idx] = f"{testcase} {issue_url} {updated_platform_str}\n"
+            # Update the existing line in place, preserving its line ending
+            line_eol = "\r\n" if lines[existing_line_idx].endswith("\r\n") else eol
+            lines[existing_line_idx] = f"{testcase} {issue_url} {updated_platform_str}{line_eol}"
             print(f"  ✅ Updated existing exclusion in {os.path.basename(file_path)}")
         
         else:
             # Different issue link: comment out existing line and append new line
+            # Deduplicate platforms and check conflicts for the proposed new line
+            all_platforms = new_platforms + existing_platforms
+            deduped_platforms = []
+            seen = set()
+            for p in all_platforms:
+                if p not in seen:
+                    seen.add(p)
+                    deduped_platforms.append(p)
+            
+            check_platform_conflicts(deduped_platforms, testcase)
+            combined_platforms = ",".join(deduped_platforms)
+            
             lines[existing_line_idx] = f"#{lines[existing_line_idx]}"
             
-            combined_platforms = f"{platform},{existing_platform_str}"
-            new_line = f"{testcase} {issue_url} {combined_platforms}\n"
+            new_line = f"{testcase} {issue_url} {combined_platforms}{eol}"
             
-            if lines and not lines[-1].endswith('\n'):
-                lines[-1] += '\n'
+            if lines and not (lines[-1].endswith('\n') or lines[-1].endswith('\r\n')):
+                lines[-1] += eol
             lines.append(new_line)
             print(f"  ✅ Commented existing exclusion and added new exclusion to {os.path.basename(file_path)}")
     
     else:
         # No existing line found: add new exclusion at the end
-        new_line = f"{testcase} {issue_url} {platform}\n"
-        if lines and not lines[-1].endswith('\n'):
-            lines[-1] += '\n'
+        new_line = f"{testcase} {issue_url} {platform}{eol}"
+        if lines and not (lines[-1].endswith('\n') or lines[-1].endswith('\r\n')):
+            lines[-1] += eol
         lines.append(new_line)
         print(f"  ✅ Added exclusion to {os.path.basename(file_path)}")
     
     # Write back to file
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', newline='') as f:
         f.writelines(lines)
     
     return True
