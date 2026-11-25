@@ -942,7 +942,7 @@ def createBadgeSummary(iconName) {
 	// Assisted by IBM Bob
 	try {
 		return addSummary(icon: iconName, text: '')
-	} catch (Exception e) {
+	} catch (Exception | NoSuchMethodError e) {
 		echo "Badge Plugin 3.x addSummary step unavailable, trying 2.x manager.addSummary: ${e.message}"
 		def legacyIcon = ICON_LEGACY_FALLBACK.getOrDefault(iconName, iconName)
 		// Badge Plugin 2.x: addSummary is a method on the manager object
@@ -1921,7 +1921,7 @@ def forceCleanWS() {
 			//cleanWs has issue to delete workspace that contains non-ASCII filename in TKG output https://issues.jenkins.io/browse/JENKINS-33478
 			//cannot delete workspace directly. Otherwise, Jenkins job will abort due to missing workspace
 			dir (env.WORKSPACE) {
-				echo "Force clean Workspace at ${pwd()}"
+				echo "Force clean Workspace at ${env.WORKSPACE}"
 				sh "rm -rf aqa-tests/TKG"
 			}
 			// call cleanWs() again
